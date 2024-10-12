@@ -6,9 +6,16 @@ public class Torcher : ModuleRules
 {
 	public Torcher(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
-		PublicIncludePaths.AddRange(
+        PCHUsage = PCHUsageMode.NoPCHs;
+        IWYUSupport = IWYUSupport.Full;
+        CppStandard = CppStandardVersion.Cpp20;
+
+        bUseRTTI = true;
+        bUseUnity = false;
+        bUsePrecompiled = false;
+        bEnableExceptions = true;
+
+        PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
 			}
