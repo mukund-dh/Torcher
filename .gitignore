@@ -48,6 +48,8 @@ SourceArt/**/*.tga
 # Binary Files
 Binaries/*
 Plugins/**/Binaries/*
+Source/ThirdParty/LibTorch/x64/include
+Source/ThirdParty/LibTorch/x64/lib
 
 # Builds
 Build/*
