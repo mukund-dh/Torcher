@@ -6,7 +6,7 @@
 
 void UTorchBlueprintUtilities::TestTorchTensor() noexcept
 {
-	const TArray<int64>& Sizes = {6, 6};
+	/*const TArray<int64>& Sizes = {6, 6};
 	at::Tensor emptyTensor = torch::randn(c10::IntArrayRef(Sizes.GetData(), Sizes.Num()));
 	int64 dimSize = emptyTensor.size(0);
 
@@ -17,7 +17,7 @@ void UTorchBlueprintUtilities::TestTorchTensor() noexcept
 	{
 		float temp = emptyTensor[0][i].item<float>();
 		UE_LOG(LogTemp, Warning, TEXT("Value of Tensor at [0][%d] is [%f]"), i, temp);
-	}
+	}*/
 
 	UE_LOG(LogTemp, Warning, TEXT("Tensor Initialized!"));
 }

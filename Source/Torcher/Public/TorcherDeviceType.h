@@ -82,14 +82,14 @@ namespace TorcherEnums
 	 * 
 	 */
 	[[nodiscard]]
-	static FORCEINLINE CONSTEXPR c10::DeviceType Cast(const ETorcherTensorDeviceType DeviceType) noexcept
+	static FORCEINLINE constexpr c10::DeviceType Cast(const ETorcherTensorDeviceType DeviceType) noexcept
 	{ return static_cast<c10::DeviceType>(DeviceType); }
 
 	/*
 	 * Transform a Libtorch Enum into a Torcher Device Type Enum
 	 */
 	[[nodiscard]]
-	static FORCEINLINE CONSTEXPR ETorcherTensorDeviceType Cast(const c10::DeviceType DeviceType) noexcept
+	static FORCEINLINE constexpr ETorcherTensorDeviceType Cast(const c10::DeviceType DeviceType) noexcept
 	{ return static_cast<ETorcherTensorDeviceType>(DeviceType); }
 }
 

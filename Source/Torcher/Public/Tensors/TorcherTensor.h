@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Based on the Atum Project by Kaya Adrian
 
 #pragma once
 
@@ -17,8 +17,10 @@ TORCH_INCLUDES_END
 
 #include "TorcherTensor.generated.h"
 
+#define LOCTEXT_NAMESPACE "ITorcherTensor"
+
 // This class does not need to be modified.
-UINTERFACE()
+UINTERFACE(MinimalAPI, NotBlueprintable, BlueprintType, DisplayName = "Torcher Tensor")
 class UTorcherTensor : public UInterface
 {
 	GENERATED_BODY()
@@ -76,11 +78,9 @@ public:
 	virtual bool DoesRequireGradient() const noexcept;
 
 	// Set whether the gradient is required or not
-	UFUNCTION(BlueprintCallable, Category="Torcher|Tensor")
-	virtual ITorcherTensor* SetRequiredGradient(bool bValue) noexcept;
+	virtual ITorcherTensor* SetRequireGradient(const bool bValue) noexcept;
 
 	// Get this tensor's sizes
-	//[[nodiscard]]
 	UFUNCTION(BlueprintCallable, Category="Torcher|Tensor")
 	virtual void GetSizes(TArray<int64>& OutSizes) const noexcept;
 
@@ -99,6 +99,7 @@ public:
 	virtual ETorcherTensorScalarType GetScalarType() const noexcept;
 
 	// Set the scalar type
+	[[nodiscard]]
 	UFUNCTION(BlueprintCallable, Category="Torcher|Tensor")
 	virtual void SetScalarType(ETorcherTensorScalarType NewScalarType) noexcept;
 
@@ -122,10 +123,10 @@ public:
 
 	// Creates a new tensor and copies over data from the input
 	UFUNCTION(BlueprintCallable, Category="Torcher|Tensor")
-	virtual void CloneData(TScriptInterface<ITorcherTensor>& OutClone, UObject* outer = nullptr) const noexcept;
+	virtual void CloneData(TScriptInterface<ITorcherTensor>& OutClone, UObject* Outer = nullptr) const noexcept;
 
 	// Compute this tensor's gradient
-	UFUNCTION(BlueprintCallable, BlueprintPure=false, Category="Torcher|Tensor", meta=(
+	UFUNCTION(BlueprintPure=false, Category="Torcher|Tensor", meta=(
 		AdvancedDisplay = "Gradient, Inputs, RetainGraphMode, bCreateGraph",
 		AutoCreateRefTerm = "Gradient, Inputs"
 		))
@@ -133,12 +134,13 @@ public:
 		const TScriptInterface<ITorcherTensor>& Gradient,
 		const TArray<TScriptInterface<ITorcherTensor>>& Inputs,
 		ETorcherTensorRetainGraphMode RetainGraphMode = ETorcherTensorRetainGraphMode::IfCreated,
-		bool bCreate = false
+		bool bCreateGraph = false
 	) const noexcept;
 
 	// Get the Libtorch device on which this tensor sits
 	[[nodiscard]]
-	FORCEINLINE c10::DeviceType GetTorchDeviceType() const noexcept { return TorcherEnums::Cast(GetDeviceType()); }
+	FORCEINLINE c10::DeviceType GetTorchDeviceType() const noexcept
+	{ return TorcherEnums::Cast(GetDeviceType()); }
 
 	// Get the Libtorch scalar type
 	[[nodiscard]]
@@ -183,13 +185,13 @@ public:
 
 	// Sets the values of a tensor regardless of the tensor type
 	template<typename T>
-	void SetValues(T* const Values, const TArray<int64>& sizes) noexcept
+	void SetValues(T* const Values, const TArray<int64>& Sizes) noexcept
 	{
 		try
 		{
 			SetData(torch::from_blob(
 				Values,
-				c10::IntArrayRef(sizes.GetData(), sizes.Num()),
+				c10::IntArrayRef(Sizes.GetData(), Sizes.Num()),
 					GetTorchScalarType()
 					).to(GetTorchDeviceType()));
 		}
@@ -208,12 +210,95 @@ protected:
 	virtual bool SaveToFile_Implementation(const FString& Path) const override;
 
 	// Loads the tensor data from a file
-	virtual bool LoadFromFile_Implementation(const FString& Path) const override;
+	virtual bool LoadFromFile_Implementation(const FString& Path) override;
 
 private:
 	// Get the values as any scalar type
 	[[nodiscard]]
 	FORCEINLINE void* GetUncastedValues(const c10::ScalarType Type) const noexcept
 	{ return IsDefined() ? Data->to(Type).data_ptr() : nullptr; }
-	
+
+	// Get the values as any scalar type
+	[[nodiscard]]
+	FORCEINLINE void* GetUncastedValues(const ETorcherTensorScalarType Type) const noexcept
+	{ return GetUncastedValues(TorcherEnums::Cast(Type)); }
+
+	// Write this tensor as a string inside a stream by overloading the << operator
+	friend std::ostream& operator<<(std::ostream& OutStream, const ITorcherTensor& TorcherTensor) noexcept;
+
+	// Write this tensor as a string inside a stream by overloading the << operator
+	friend std::ostream& operator<<(std::ostream& OutStream, const TScriptInterface<ITorcherTensor>& TorcherTensor) noexcept;
+
+public:
+	// Getter for default device type
+	[[nodiscard]]
+	static FORCEINLINE ETorcherTensorDeviceType GetDefaultDeviceType() noexcept { return DefaultDevice; }
+
+	// Setter for default device type
+	static FORCEINLINE void SetDefaultDeviceType(const ETorcherTensorDeviceType Type) noexcept
+	{ DefaultDevice = Type; }
+
+	// Getter for Data as a pointer
+	[[nodiscard]]
+	FORCEINLINE const at::Tensor* GetData() const noexcept { return Data.Get(); }
+
+	// Getter for Data as a reference
+	[[nodiscard]]
+	FORCEINLINE const at::Tensor& GetDataChecked() const noexcept { return *GetData(); }
+
+	// Setter for Data
+	FORCEINLINE void SetData(const at::Tensor& Value) noexcept
+	{
+		Data.Reset(Value.defined() ?
+			new at::Tensor(Value.to(GetTorchDeviceType()).to(GetTorchScalarType())) :
+			nullptr
+		);
+	}
 };
+
+/*
+ * Templated part of the Tensor Interface
+ */
+template <typename T>
+class TTorcherSensor
+{
+protected:
+	// Container for values after being set with templates to maintain the reference
+	mutable TArray<T> InternalValues = TArray<T>();
+
+	// Sets the internal values and keeps the input array
+	void SetInternalValues(ITorcherTensor& TorcherTensor, const TArray<T>& Values, const TArray<int64>& Sizes) noexcept;
+
+public:
+	// Getter for internal values
+	[[nodiscard]]
+	FORCEINLINE const TArray<T>& GetInternalValues() const noexcept { return InternalValues; }
+
+	// Getter for internal values
+	FORCEINLINE void GetInternalValues(TArray<T>& OutValues) noexcept { OutValues = InternalValues; }
+};
+
+template <typename T>
+void ITorcherTensor::GetValues(TArray<T>& OutValues, TArray<int64>& OutSizes) const noexcept
+{
+	if (!IsDefined())
+		return;
+
+	OutValues.Append(static_cast<T*>(GetUncastedValues(GetScalarType())), Data->numel());
+
+	const c10::IntArrayRef DataSizes = Data->sizes();
+	OutSizes = TArray(DataSizes.data(), DataSizes.size());
+}
+
+template <typename T>
+void TTorcherSensor<T>::SetInternalValues(
+	ITorcherTensor& TorcherTensor,
+	const TArray<T>& Values,
+	const TArray<int64>& Sizes) noexcept
+{
+	InternalValues = Values;
+	TorcherTensor.SetValues<T>(InternalValues.GetData(), Sizes);
+}
+
+#undef LOCTEXT_NAMESPACE
+

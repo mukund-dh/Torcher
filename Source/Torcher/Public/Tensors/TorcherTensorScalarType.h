@@ -38,8 +38,8 @@ enum class ETorcherTensorScalarType : uint8
 	QByte = c10::ScalarType::QUInt8 UMETA(DisplayName="QByte"),
 	QInt = c10::ScalarType::QInt32 UMETA(DisplayName="QInt"),
 	BHalf = c10::ScalarType::BFloat16 UMETA(DisplayName="BHalf"),
-	Q4x2 = c10::ScalarType::QUInt4x2 UMETA(DisplayName="QUInt4x2"),
-	Q2x4 = c10::ScalarType::QUInt2x4 UMETA(DisplayName="QUInt2x4"),
+	Q4X2 = c10::ScalarType::QUInt4x2 UMETA(DisplayName="QUInt4x2"),
+	Q2X4 = c10::ScalarType::QUInt2x4 UMETA(DisplayName="QUInt2x4"),
 	Undefined = c10::ScalarType::Undefined UMETA(DisplayName="Undefined"),
 	TypesCount = c10::ScalarType::NumOptions UMETA(Hidden, DisplayName="Types Count")
 };
@@ -50,13 +50,13 @@ namespace TorcherEnums
 	 * Transforms a Torcher Enum Value to a Libtorch Scalar Type Enum
 	 */
 	[[nodiscard]]
-	static FORCEINLINE CONSTEXPR c10::ScalarType Cast(const ETorcherTensorScalarType ScalarType) noexcept
+	static FORCEINLINE constexpr c10::ScalarType Cast(const ETorcherTensorScalarType ScalarType) noexcept
 	{ return static_cast<c10::ScalarType>(ScalarType); }
 
 	/*
 	 * Transforms a Libtorch Scalar Type to a Torcher Enum value
 	 */
-	static FORCEINLINE CONSTEXPR ETorcherTensorScalarType Cast(const c10::ScalarType ScalarType) noexcept
+	static FORCEINLINE constexpr ETorcherTensorScalarType Cast(const c10::ScalarType ScalarType) noexcept
 	{ return static_cast<ETorcherTensorScalarType>(ScalarType); }
 }
 

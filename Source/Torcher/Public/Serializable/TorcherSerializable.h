@@ -32,7 +32,7 @@ public:
 
 	// Loads the Serializable Object from a file
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Torcher|Serializable")
-	bool LoadFromFile(const FString& Path) const;
+	bool LoadFromFile(const FString& Path);
 
 protected:
 
@@ -41,7 +41,7 @@ protected:
 	PURE_VIRTUAL(ITorcherSerializable::SaveToFile, return false;);
 
 	// Loads the serializable data from a file
-	virtual  bool LoadFromFile_Implementation([[maybe_unused]] const FString& Path) const
+	virtual  bool LoadFromFile_Implementation([[maybe_unused]] const FString& Path)
 	PURE_VIRTUAL(ITorcherSerializable::LoadFromFile, return false;);
 };
 
