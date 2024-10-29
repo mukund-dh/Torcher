@@ -6,9 +6,9 @@
 #include "EngineUtils.h"
 #include "UObject/Interface.h"
 
-#include "TorcherDeviceType.h"
+#include "Tensors/TorcherDeviceType.h"
 #include "Tensors/TorcherTensorScalarType.h"
-#include "TorcherTensorRetainGraphMode.h"
+#include "Tensors/TorcherTensorRetainGraphMode.h"
 #include "Serializable/TorcherSerializable.h"
 
 TORCH_INCLUDES_START
