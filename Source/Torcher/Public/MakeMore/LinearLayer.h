@@ -15,7 +15,6 @@ TORCH_INCLUDES_END
 #include "LinearLayer.generated.h"
 
 
-
 /**
  * Data Asset definition of a Linear Layer, which uses a float tensor
  */
