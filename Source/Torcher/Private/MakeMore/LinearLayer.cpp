@@ -53,8 +53,13 @@ void ULinearLayer::InitTensors() noexcept
 
 at::Tensor ULinearLayer::Forward(const at::Tensor& InTensor) noexcept
 {
+	if (Out && Out->defined())
+	{
+		delete Out;
+		Out = nullptr;
+	}
 	// Out will have to be set as a new at::Tensor initialized with a torch::matmul
-	Out = new at::Tensor(torch::matmul(InTensor, *Weights));
+	Out = new at::Tensor(torch::matmul(InTensor, *Weights).clone());
 	if (Bias->defined())
 		*Out += *Bias;
 
@@ -102,7 +107,7 @@ void ULinearLayer::SetWeightsFromArray(const TArray<float>& InArray, const TArra
 	std::vector<float> WeightVec(InArray.GetData(), InArray.GetData() + InArray.Num());
 
 	// Convert WeightVec into a Tensor and assign it to Weights
-	Weights = new at::Tensor(torch::from_blob(WeightVec.data(), dims, torch::kFloat));
+	Weights = new at::Tensor(torch::from_blob(WeightVec.data(), dims, torch::kFloat).clone());
 }
 
 void ULinearLayer::SetBiasFromArray(const TArray<float>& InArray, const TArray<int32>& Dimensions)
@@ -120,7 +125,7 @@ void ULinearLayer::SetBiasFromArray(const TArray<float>& InArray, const TArray<i
 	std::vector<float> WeightVec(InArray.GetData(), InArray.GetData() + InArray.Num());
 
 	// Convert WeightVec into a Tensor and assign it to Weights
-	Bias = new at::Tensor(torch::from_blob(WeightVec.data(), dims, torch::kFloat));
+	Bias = new at::Tensor(torch::from_blob(WeightVec.data(), dims, torch::kFloat).clone());
 }
 
 std::vector<float> ULinearLayer::ConvertTensorToVector(const at::Tensor& InTensor)
