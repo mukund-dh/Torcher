@@ -93,13 +93,37 @@ void ULinearLayer::GetOutputs(TArray<float>& OutVals)
 	}
 }
 
+void ULinearLayer::SetWeightsFromArray(const TArray<float>& InArray, const TArray<int32>& Dimensions)
+{
+	// Get the dimensions as an std::vector<int64_t> 
+	std::vector<int64_t> dims = std::vector<int64_t>(Dimensions.GetData(), Dimensions.GetData() + Dimensions.Num());
+
+	// Convert the TArray<float> to an std::vector<float>
+	std::vector<float> WeightVec(InArray.GetData(), InArray.GetData() + InArray.Num());
+
+	// Convert WeightVec into a Tensor and assign it to Weights
+	Weights = new at::Tensor(torch::from_blob(WeightVec.data(), dims, torch::kFloat));
+}
+
+void ULinearLayer::SetBiasFromArray(const TArray<float>& InArray, const TArray<int32>& Dimensions)
+{
+	if (!Bias)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("This layer doesn't use bias. Skipping."));
+		return;
+	}
+	
+	// Get the dimensions as an std::vector<int64_t> 
+	std::vector<int64_t> dims = std::vector<int64_t>(Dimensions.GetData(), Dimensions.GetData() + Dimensions.Num());
+
+	// Convert the TArray<float> to an std::vector<float>
+	std::vector<float> WeightVec(InArray.GetData(), InArray.GetData() + InArray.Num());
+
+	// Convert WeightVec into a Tensor and assign it to Weights
+	Bias = new at::Tensor(torch::from_blob(WeightVec.data(), dims, torch::kFloat));
+}
+
 std::vector<float> ULinearLayer::ConvertTensorToVector(const at::Tensor& InTensor)
 {
 	return std::vector<float>(InTensor.data_ptr<float>(), InTensor.data_ptr<float>() + InTensor.numel());
 }
-
-/*at::Tensor ULinearLayer::ConvertArrayToTensor(const TArray<float>& Array, const std::vector<int64_t>& Sizes) const
-{
-}*/
-
-

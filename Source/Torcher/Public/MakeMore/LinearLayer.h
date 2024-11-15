@@ -48,6 +48,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Layer|Params")
 	int64 Seed;
 
+private:
 	// Tensor which stores the weights for this layer
 	at::Tensor* Weights;
 	
@@ -79,11 +80,30 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
 	void GetOutputs(TArray<float>& OutVals);
 
+	// Convert the given flat array to Weights
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
+	void SetWeightsFromArray(const TArray<float>& InArray, const TArray<int32>& Dimensions);
+
+	// Convert the given flat array to Bias
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
+	void SetBiasFromArray(const TArray<float>& InArray, const TArray<int32>& Dimensions);
+
+	// Get the at::Tensor* for Weights
+	[[nodiscard]]
+	FORCEINLINE at::Tensor* GetWeights() const noexcept { return Weights; }
+
+	// Get the at::Tensor* for Bias
+	[[nodiscard]]
+	FORCEINLINE at::Tensor* GetBias() const noexcept { return Bias; }
+
+	// Get the at::Tensor* for Out
+	[[nodiscard]]
+	FORCEINLINE at::Tensor* GetOut() const noexcept { return Out; }
+	
 private:
 
-	// Convert at::Tensor to a flat TArray<float>. This can take a bit and a half on large
-	// tensors with more than 3-4 dimensions.
+	// Convert at::Tensor to a flat TArray<float>. This eschews the for-loop method, which would've
+	// taken a bit and a half to convert data. This is a slightly more direct model.
 	std::vector<float> ConvertTensorToVector(const at::Tensor& InTensor);
-
-	// at::Tensor ConvertArrayToTensor(const TArray<float>& Array, const std::vector<int64_t>& Sizes) const;
+	
 };
