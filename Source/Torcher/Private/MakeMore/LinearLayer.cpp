@@ -43,8 +43,8 @@ void ULinearLayer::InitTensors() noexcept
 		Weights = new at::Tensor(torch::randn({FanIn, FanOut}, gen, opt) / FMath::Pow(FanIn, 0.5));
 	}
 
-	// Initialize biases to a zero tensor if this has biases.
-	if (bHasBias)
+	// Initialize biases to a zero tensor if this has biases and Bias hasn't already been initialized.
+	if (bHasBias and !Bias)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Initializing biases to a 0 tensor"));
 		Bias = new at::Tensor(at::zeros({FanOut}, opt));
@@ -58,6 +58,15 @@ at::Tensor ULinearLayer::Forward(const at::Tensor& InTensor) noexcept
 		delete Out;
 		Out = nullptr;
 	}
+
+	// IN CASE Weights aren't initialized/defined
+	if (!Weights || !Weights->defined())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Weights haven't been properly defined. Initializing to torch::zeros."));
+		auto opt = at::TensorOptions().dtype(c10::ScalarType::Float).device(c10::DeviceType::CPU);
+		Weights = new at::Tensor(torch::zeros({FanIn, FanOut}, opt));
+	}
+	
 	// Out will have to be set as a new at::Tensor initialized with a torch::matmul
 	Out = new at::Tensor(torch::matmul(InTensor, *Weights).clone());
 	if (Bias->defined())
@@ -69,7 +78,7 @@ at::Tensor ULinearLayer::Forward(const at::Tensor& InTensor) noexcept
 float ULinearLayer::GetValueAtIndex(TArray<int32> IndexArray) const
 {
 	// Debug.
-	return Weights->data()[IndexArray[0]][IndexArray[1]].item<float>();
+	return (Weights && Weights->defined()) ? Weights->data()[IndexArray[0]][IndexArray[1]].item<float>() : INFINITY;
 }
 
 void ULinearLayer::GetParameters(TArray<float>& WeightVals, TArray<float>& Biases)
@@ -106,6 +115,14 @@ void ULinearLayer::SetWeightsFromArray(const TArray<float>& InArray, const TArra
 	// Convert the TArray<float> to an std::vector<float>
 	std::vector<float> WeightVec(InArray.GetData(), InArray.GetData() + InArray.Num());
 
+	// Sanity Checks
+	if (Weights && Weights->defined())
+	{
+		// Clean out any previously seet value for Weights
+		delete Weights;
+		Weights = nullptr;
+	}
+
 	// Convert WeightVec into a Tensor and assign it to Weights
 	Weights = new at::Tensor(torch::from_blob(WeightVec.data(), dims, torch::kFloat).clone());
 }
@@ -123,6 +140,14 @@ void ULinearLayer::SetBiasFromArray(const TArray<float>& InArray, const TArray<i
 
 	// Convert the TArray<float> to an std::vector<float>
 	std::vector<float> WeightVec(InArray.GetData(), InArray.GetData() + InArray.Num());
+
+	// Sanity Checks
+	if (Weights && Weights->defined())
+	{
+		// Clean out any previously seet value for Bias
+		delete Bias;
+		Bias = nullptr;
+	}
 
 	// Convert WeightVec into a Tensor and assign it to Weights
 	Bias = new at::Tensor(torch::from_blob(WeightVec.data(), dims, torch::kFloat).clone());

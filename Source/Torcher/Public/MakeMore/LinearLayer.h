@@ -98,6 +98,30 @@ public:
 	// Get the at::Tensor* for Out
 	[[nodiscard]]
 	FORCEINLINE at::Tensor* GetOut() const noexcept { return Out; }
+
+	// Set the Weights tensor from an input
+	FORCEINLINE void SetWeightsFromTensor(const at::Tensor& NewWeights) noexcept
+	{
+		if (Weights)
+		{
+			delete Weights;
+			Weights = nullptr;
+		}
+
+		Weights = new at::Tensor(NewWeights.clone());
+	}
+
+	// Set the Bias tensor from an input
+	FORCEINLINE void SetBiasFromTensor(const at::Tensor& NewBias) noexcept
+	{
+		if (Bias)
+		{
+			delete Bias;
+			Bias = nullptr;
+		}
+
+		Bias = new at::Tensor(NewBias.clone());
+	}
 	
 private:
 
