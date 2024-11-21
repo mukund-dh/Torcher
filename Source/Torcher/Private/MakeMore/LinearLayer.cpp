@@ -37,18 +37,18 @@ void ULinearLayer::InitTensors() noexcept
 		// Create a generator with a manual seed.
 		auto gen = at::detail::createCPUGenerator(Seed);
 		// Set the Weights. We will have to create a new at::Tensor initialized with a torch::randn
-		Weights = new at::Tensor(torch::randn({FanIn, FanOut}, gen, opt) / FMath::Pow(FanIn, 0.5));
+		Weights = new at::Tensor((torch::randn({FanIn, FanOut}, gen, opt) / FMath::Pow(FanIn, 0.5)).clone());
 	}
 
 	// Initialize biases to a zero tensor if this has biases and Bias hasn't already been initialized.
 	if (bHasBias and !Bias)
 	{
 		UE_LOG(LogTorcherTensor, Log, TEXT("Initializing biases to a 0 tensor"));
-		Bias = new at::Tensor(at::zeros({FanOut}, opt));
+		Bias = new at::Tensor(at::zeros({FanOut}, opt).clone());
 	}
 }
 
-at::Tensor ULinearLayer::Forward(const at::Tensor& InTensor) noexcept
+at::Tensor ULinearLayer::operator()(const at::Tensor& InTensor) noexcept
 {
 	if (Out && Out->defined())
 	{

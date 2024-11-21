@@ -60,7 +60,7 @@ public:
 	void InitTensors() noexcept;
 
 	// Forward Pass on this layer
-	virtual at::Tensor Forward(const at::Tensor& InTensor) noexcept override;
+	virtual at::Tensor operator()(const at::Tensor& InTensor) noexcept override;
 
 	// Basic Debug Function. USE AT YOUR OWN RISK
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor")

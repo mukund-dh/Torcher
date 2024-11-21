@@ -11,14 +11,6 @@ UMLPLayerBase::UMLPLayerBase(const FObjectInitializer& ObjectInitializer) noexce
 {
 }
 
-at::Tensor UMLPLayerBase::Forward(const at::Tensor& InTensor) noexcept
-{
-	// Just a basic implementation that takes in the passed Tensor
-	// and sets it as the OutTensor.
-	SetTensor(Out, InTensor);
-	return InTensor;
-}
-
 void UMLPLayerBase::SetTensor(at::Tensor*& TensorPtr, const at::Tensor& NewTensor) noexcept
 {
 	if (TensorPtr)

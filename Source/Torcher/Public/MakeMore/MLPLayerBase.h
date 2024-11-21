@@ -53,7 +53,7 @@ public:
 	template <typename T>
 	[[nodiscard]]
 	TArray<T> GetTensorAsArray(at::Tensor*& TensorPtr) noexcept;
-
+ 	
 	/*
 	 * Blueprint Callable Function to get the Out Tensor as a TArray<int32>
 	 *
@@ -124,11 +124,15 @@ public:
 	}
 	
 	/*
-	 * Forward Pass on this layer. This is a base function, to be overridden in children
+	 * override the "call" operator, which allows us to call this object as a function
 	 *
 	 * @param at::Tensor& InTensor The InTensor to perform the forward pass with
 	 */
-	virtual at::Tensor Forward(const at::Tensor& InTensor) noexcept;
+	virtual at::Tensor operator()(const at::Tensor& InTensor) noexcept
+	{
+		// Default behaviour, do nothing and just return the InTensor as is.
+		return InTensor;
+	}
 
 protected:
 	/*

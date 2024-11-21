@@ -10,7 +10,7 @@ UTanHLayer::UTanHLayer(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-at::Tensor UTanHLayer::Forward(const at::Tensor& InTensor) noexcept
+at::Tensor UTanHLayer::operator()(const at::Tensor& InTensor) noexcept
 {
 	SetTensor(Out, torch::tanh(InTensor));
 	return *Out;

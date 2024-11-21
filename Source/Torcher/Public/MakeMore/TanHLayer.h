@@ -19,5 +19,5 @@ public:
 	UTanHLayer(const FObjectInitializer& ObjectInitializer);
 	
 	// Overridden Forward
-	virtual at::Tensor Forward(const at::Tensor& InTensor) noexcept override;
+	virtual at::Tensor operator()(const at::Tensor& InTensor) noexcept override;
 };
