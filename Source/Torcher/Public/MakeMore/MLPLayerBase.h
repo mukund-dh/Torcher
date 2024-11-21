@@ -14,7 +14,7 @@ TORCH_INCLUDES_END
 #include "MLPLayerBase.generated.h"
 
 /**
- * 
+ * Base layer for a layer description in a multi layer perceptron
  */
 UCLASS(Blueprintable, BlueprintType)
 class TORCHER_API UMLPLayerBase : public UDataAsset
@@ -44,38 +44,111 @@ public:
 	// Get the at::Tensor* for Out
 	[[nodiscard]]
 	FORCEINLINE at::Tensor* GetOut() const noexcept { return Out; }
-	
+
+	/* 
+	 * Template function to get the Out Tensor as a TArray
+	 *
+	 * Supported types: int32, float, uint8
+	 */
 	template <typename T>
+	[[nodiscard]]
 	TArray<T> GetOutTensorAsArray() noexcept;
 
+	/*
+	 * Blueprint Callable Function to get the Out Tensor as a TArray<int32>
+	 *
+	 * @param TArray<int32>& OutArray The array to populate the tensor values with
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
-	FORCEINLINE void GetOutTensorAsArray_Int32(TArray<int32>& OutArray) noexcept
+	FORCEINLINE void GetOutTensorAsIntArray(TArray<int32>& OutArray) noexcept
 	{
 		OutArray = GetOutTensorAsArray<int32>();
 	}
 
+	/*
+	 * Blueprint Callable Function to get the Out Tensor as a TArray<float>
+	 *
+	 * @param TArray<float>& OutArray The array to populate the tensor values with
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
-	FORCEINLINE void GetOutTensorAsArray_Float(TArray<float>& OutArray) noexcept
+	FORCEINLINE void GetOutTensorAsFloatArray(TArray<float>& OutArray) noexcept
 	{
 		OutArray = GetOutTensorAsArray<float>();
 	}
 
+	/*
+	 * Blueprint Callable Function to get the Out Tensor as a TArray<uint8>
+	 *
+	 * @param TArray<uint8>& OutArray The array to populate the tensor values with
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
-	FORCEINLINE void GetOutTensorAsArray_UInt8(TArray<uint8>& OutArray) noexcept
+	FORCEINLINE void GetOutTensorAsByteArray(TArray<uint8>& OutArray) noexcept
 	{
 		OutArray = GetOutTensorAsArray<uint8>();
 	}
+
+	/*
+	 * Blueprint Callable Function to set the Out Tensor from a TArray<int32>
+	 *
+	 * @param TArray<int32>& InArray The array to populate the tensor values from
+	 * @param const TArray<int32>& Dimensions The dimensions of the Out tensor
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
+	FORCEINLINE void SetOutTensorFromIntArray(const TArray<int32>& InArray, const TArray<int32>& Dimensions) noexcept
+	{
+		SetTensor(Out, InArray, Dimensions);
+	}
+
+	/*
+	 * Blueprint Callable Function to set the Out Tensor from a TArray<float>
+	 *
+	 * @param TArray<float>& InArray The array to populate the tensor values from
+	 * @param const TArray<int32>& Dimensions The dimensions of the Out tensor
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
+	FORCEINLINE void SetOutTensorFromFloatArray(const TArray<float>& InArray, const TArray<int32>& Dimensions) noexcept
+	{
+		SetTensor(Out, InArray, Dimensions);
+	}
+
+	/*
+	 * Blueprint Callable Function to set the Out Tensor from a TArray<uint8>
+	 *
+	 * @param TArray<uint8>& InArray The array to populate the tensor values from
+	 * @param const TArray<int32>& Dimensions The dimensions of the Out tensor
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
+	FORCEINLINE void SetOutTensorFromByteArray(const TArray<uint8>& InArray, const TArray<int32>& Dimensions) noexcept
+	{
+		SetTensor(Out, InArray, Dimensions);
+	}
 	
-	// Forward Pass on this layer
+	/*
+	 * Forward Pass on this layer. This is a base function, to be overridden in children
+	 *
+	 * @param at::Tensor& InTensor The InTensor to perform the forward pass with
+	 */
 	virtual at::Tensor Forward(const at::Tensor& InTensor) noexcept;
 
 protected:
-	// Set the value of the TensorPtr to the passed NewTensor
+	/*
+	 * Set the value of the TensorPtr to the passed NewTensor
+	 *
+	 * @param at::Tensor*& TensorPtr Address to the Tensor pointer you want to set
+	 * @param const at::Tensor& NewTensor The new set of values you want to set the TensorPtr to 
+	 */
 	void SetTensor(at::Tensor*& TensorPtr, const at::Tensor& NewTensor) noexcept;
 
-	// Set the value of the TensorPtr to the passed TArray
+	/*
+	 * Template function to set the value of the TensorPtr to the passed TArray
+	 * Supported types are: int32, float, uint8
+	 *
+	 * @param at::Tensor*& TensorPtr Address to the Tensor pointer you want to set
+	 * @param const TArray<T>& InArray The input TArray
+	 * const TArray<int32>& Dimensions The Dimensions of the tensor
+	 */
 	template <typename T>
-	void SetTensor(at::Tensor*& TensorPtr, const TArray<T>& InArray, const TArray<int32>& Dimensions);
+	void SetTensor(at::Tensor*& TensorPtr, const TArray<T>& InArray, const TArray<int32>& Dimensions) noexcept;
 
 	// Convert at::Tensor to a flat TArray<T>. This eschews the for-loop method, which would've
 	// taken a bit and a half to convert data. This is a slightly more direct model.

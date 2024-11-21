@@ -2,6 +2,7 @@
 
 
 #include "MakeMore/MLPLayerBase.h"
+#include "Macros/TorcherLogs.h"
 
 
 UMLPLayerBase::UMLPLayerBase(const FObjectInitializer& ObjectInitializer) noexcept
@@ -44,14 +45,14 @@ TArray<T> UMLPLayerBase::GetOutTensorAsArray() noexcept
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("Invalid Output Requested"));
+			UE_LOG(LogTorcherTensor, Error, TEXT("Invalid Output Requested"));
 		}
 	}
 	return OutVec;
 }
 
 template <typename T>
-void UMLPLayerBase::SetTensor(at::Tensor*& TensorPtr, const TArray<T>& InArray, const TArray<int32>& Dimensions)
+void UMLPLayerBase::SetTensor(at::Tensor*& TensorPtr, const TArray<T>& InArray, const TArray<int32>& Dimensions) noexcept
 {
 	if (TensorPtr)
 	{
@@ -81,7 +82,7 @@ void UMLPLayerBase::SetTensor(at::Tensor*& TensorPtr, const TArray<T>& InArray, 
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Invalid TArray Type passed"));
+		UE_LOG(LogTorcherTensor, Error, TEXT("Invalid TArray Type passed"));
 		return;
 	}
 
@@ -99,25 +100,8 @@ std::vector<T> UMLPLayerBase::ConvertTensorToVector(const at::Tensor& InTensor)
 	{
 		// If the requested type is none of the supported types, return an empty
 		// vector of the passed type
-		UE_LOG(LogTemp, Error, TEXT("Invalid TArray Type Requested!"));
+		UE_LOG(LogTorcherTensor, Error, TEXT("Invalid TArray Type Requested!"));
 		return std::vector<T>();
 	}
 	return std::vector<T>(InTensor.data_ptr<T>(), InTensor.data_ptr<T>() + InTensor.numel());
 }
-
-// Explicitly define possible templates for SetTensor
-template void UMLPLayerBase::SetTensor(at::Tensor*& TensorPtr, const TArray<int32>& InArray, const TArray<int32>& Dimensions);
-template void UMLPLayerBase::SetTensor(at::Tensor*& TensorPtr, const TArray<int64>& InArray, const TArray<int32>& Dimensions);
-template void UMLPLayerBase::SetTensor(at::Tensor*& TensorPtr, const TArray<float>& InArray, const TArray<int32>& Dimensions);
-template void UMLPLayerBase::SetTensor(at::Tensor*& TensorPtr, const TArray<uint8>& InArray, const TArray<int32>& Dimensions);
-
-// Explicitly define possible templates for ConvertTensorToVector
-template std::vector<int32> UMLPLayerBase::ConvertTensorToVector(const at::Tensor& InTensor);
-template std::vector<int64> UMLPLayerBase::ConvertTensorToVector(const at::Tensor& InTensor);
-template std::vector<float> UMLPLayerBase::ConvertTensorToVector(const at::Tensor& InTensor);
-template std::vector<uint8> UMLPLayerBase::ConvertTensorToVector(const at::Tensor& InTensor);
-
-// Explicitly define possible templates for GetOutTensorAsArray
-template TArray<int32> UMLPLayerBase::GetOutTensorAsArray() noexcept;
-template TArray<float> UMLPLayerBase::GetOutTensorAsArray() noexcept;
-template TArray<uint8> UMLPLayerBase::GetOutTensorAsArray() noexcept;
