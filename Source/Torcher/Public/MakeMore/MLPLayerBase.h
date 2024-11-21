@@ -52,7 +52,7 @@ public:
 	 */
 	template <typename T>
 	[[nodiscard]]
-	TArray<T> GetOutTensorAsArray() noexcept;
+	TArray<T> GetTensorAsArray(at::Tensor*& TensorPtr) noexcept;
 
 	/*
 	 * Blueprint Callable Function to get the Out Tensor as a TArray<int32>
@@ -62,7 +62,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
 	FORCEINLINE void GetOutTensorAsIntArray(TArray<int32>& OutArray) noexcept
 	{
-		OutArray = GetOutTensorAsArray<int32>();
+		OutArray = GetTensorAsArray<int32>(Out);
 	}
 
 	/*
@@ -73,7 +73,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
 	FORCEINLINE void GetOutTensorAsFloatArray(TArray<float>& OutArray) noexcept
 	{
-		OutArray = GetOutTensorAsArray<float>();
+		OutArray = GetTensorAsArray<float>(Out);
 	}
 
 	/*
@@ -84,7 +84,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
 	FORCEINLINE void GetOutTensorAsByteArray(TArray<uint8>& OutArray) noexcept
 	{
-		OutArray = GetOutTensorAsArray<uint8>();
+		OutArray = GetTensorAsArray<uint8>(Out);
 	}
 
 	/*

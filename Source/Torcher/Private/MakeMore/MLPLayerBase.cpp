@@ -31,16 +31,16 @@ void UMLPLayerBase::SetTensor(at::Tensor*& TensorPtr, const at::Tensor& NewTenso
 }
 
 template <typename T>
-TArray<T> UMLPLayerBase::GetOutTensorAsArray() noexcept
+TArray<T> UMLPLayerBase::GetTensorAsArray(at::Tensor*& TensorPtr) noexcept
 {
 	TArray<T> OutVec;
 	// Extract values from Out
-	if (Out && Out->defined())
+	if (TensorPtr && TensorPtr->defined())
 	{
 		if (std::is_same<T, int32>::value || std::is_same<T, int64>::value ||
 			std::is_same<T, float>::value || std::is_same<T, uint8>::value)
 		{
-			std::vector<T> WeightsVec = ConvertTensorToVector<T>(*Out);
+			std::vector<T> WeightsVec = ConvertTensorToVector<T>(*TensorPtr);
 			OutVec.Append(&WeightsVec[0], WeightsVec.size());
 		}
 		else
