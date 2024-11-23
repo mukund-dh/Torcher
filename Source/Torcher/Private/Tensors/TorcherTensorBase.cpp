@@ -90,9 +90,9 @@ TArray<T> UTorcherTensorBase::GetData() noexcept
 	TArray<T> OutArray;
 
 	// Sanity Check: see if the requested type is a supported type
-	if (!std::is_same<T, uint8>::value && !std::is_same<T, int32>::value &&
-		!std::is_same<T, int64>::value && !std::is_same<T, float>::value &&
-		!std::is_same<T, double>::value && !std::is_same<T, bool>::value)
+	if (!std::is_same_v<T, uint8> && !std::is_same_v<T, int32> &&
+		!std::is_same_v<T, int64> && !std::is_same_v<T, float> &&
+		!std::is_same_v<T, double> && !std::is_same_v<T, bool>)
 	{
 		UE_LOG(LogTorcherTensor, Error, TEXT("Requested type is not a supported type."));
 		return TArray<T>();
@@ -108,9 +108,9 @@ template <typename T>
 std::vector<T> UTorcherTensorBase::ConvertTensorToVector(const at::Tensor& InTensor)
 {
 	// Sanity check; Do this just in case we're called from a function without type checks
-	if (!std::is_same<T, uint8>::value && !std::is_same<T, int32>::value &&
-		!std::is_same<T, int64>::value && !std::is_same<T, float>::value &&
-		!std::is_same<T, double>::value && !std::is_same<T, bool>::value)
+	if (!std::is_same_v<T, uint8> && !std::is_same_v<T, int32> &&
+		!std::is_same_v<T, int64> && !std::is_same_v<T, float> &&
+		!std::is_same_v<T, double> && !std::is_same_v<T, bool>)
 	{
 		UE_LOG(LogTorcherTensor, Error, TEXT("Requested type is not a supported type."));
 		return std::vector<T>();
