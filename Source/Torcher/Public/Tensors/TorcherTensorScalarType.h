@@ -71,7 +71,21 @@ namespace TorcherEnums
 	 * Transforms a Libtorch Scalar Type to a Torcher Enum value
 	 */
 	static FORCEINLINE constexpr ETorcherTensorScalarType Cast(const c10::ScalarType ScalarType) noexcept
-	{ return static_cast<ETorcherTensorScalarType>(ScalarType); }
+	{
+		switch (ScalarType)
+		{
+			case c10::ScalarType::Byte: return ETorcherTensorScalarType::Byte;
+			case c10::ScalarType::Int: return ETorcherTensorScalarType::Int;
+			case c10::ScalarType::Long: return ETorcherTensorScalarType::Long;
+			case c10::ScalarType::Float: return ETorcherTensorScalarType::Float;
+			case c10::ScalarType::Double: return ETorcherTensorScalarType::Double;
+			case c10::ScalarType::Bool: return ETorcherTensorScalarType::Boolean;
+			// Add cases for other c10::ScalarType values
+			default:
+				// Handle types without a direct match
+				return ETorcherTensorScalarType::Undefined;
+		}
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

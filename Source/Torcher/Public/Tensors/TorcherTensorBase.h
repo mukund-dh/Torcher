@@ -53,11 +53,6 @@ public:
 	UE_NODISCARD_CTOR
 	UTorcherTensorBase(const FObjectInitializer& ObjectInitializer) noexcept;
 
-	/*
-	 * Destructor
-	 */
-	~UTorcherTensorBase();
-
 protected:
 	/*
 	 * Does Data own a tensor, and is the tensor defined??

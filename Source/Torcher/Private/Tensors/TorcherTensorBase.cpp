@@ -13,12 +13,20 @@ UTorcherTensorBase::UTorcherTensorBase(const FObjectInitializer& ObjectInitializ
 {
 }
 
-UTorcherTensorBase::~UTorcherTensorBase()
-{
-}
-
 void UTorcherTensorBase::SetData(const at::Tensor& InTensor) noexcept
 {
+	// Set the TensorScalarType to the appropriate type if it's undefined
+	if (TensorScalarType == ETorcherTensorScalarType::Undefined)
+	{
+		TensorScalarType = TorcherEnums::Cast(InTensor.scalar_type());
+		// if it's still undefined then skip the SetData
+		if (TensorScalarType == ETorcherTensorScalarType::Undefined)
+		{
+			UE_LOG(LogTorcherTensor, Error, TEXT("Invalid Scalar Type of Tensor encountered. Skipping."));
+			return;
+		}
+	}
+	
 	if (TorcherEnums::Cast(InTensor.device().type()) != TensorDevice)
 	{
 		UE_LOG(LogTorcherTensor, Error, TEXT("Device Type Mismatch between Data and InTensor. Please check."));
@@ -53,6 +61,13 @@ void UTorcherTensorBase::SetRequiresGradient(const bool bRequiresGrad) noexcept
 template <typename T>
 void UTorcherTensorBase::SetData(const TArray<T>& InArray) noexcept
 {
+	// Don't set the Array data if we don't have a defined scalar type.
+	if (TensorScalarType == ETorcherTensorScalarType::Undefined)
+	{
+		UE_LOG(LogTorcherTensor, Error, TEXT("Invalid Scalar Type of Tensor encountered. Skipping."));
+		return;
+	}
+	
 	// Sanity Check; first ensure that we have enough elements in the InArray to fill the tensor.
 	int64 TotalElements = 1;
 	for (int64 Dim : Dimensions)
