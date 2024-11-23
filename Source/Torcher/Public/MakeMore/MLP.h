@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "Tensors/TorcherTensorFloat.h"
 #include "MLP.generated.h"
 
 class UMMTokenizer;
@@ -16,10 +17,17 @@ class TORCHER_API UMLP : public UObject
 {
 	GENERATED_BODY()
 
-	UMLP(const FObjectInitializer& ObjectInitializer);
-
 public:
+
+	UE_NODISCARD_CTOR
+	UMLP(const FObjectInitializer& ObjectInitializer);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tokens")
 	UMMTokenizer* Tokenizer;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Tokens")
+	UTorcherTensorFloat* FloatTensor;
+
+	UFUNCTION(BlueprintCallable, Category = "Tensors")
+	void InitTensors() noexcept;
 };

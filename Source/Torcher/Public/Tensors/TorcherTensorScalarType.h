@@ -16,6 +16,20 @@ TORCH_INCLUDES_END
 
 /**
  * Represents all the scalars which can be used within the tensors
+ * For blueprint compatibility in Unreal Engine, we are skipping the following types:
+ *
+ * Short - technically can use int16, but we can't expose that to blueprints.
+ * Char
+ * Half
+ * ComplexHalf
+ * ComplexFloat
+ * ComplextDouble
+ * QInt8
+ * QUInt8
+ * QInt32
+ * BFloat16
+ * QUInt4x2
+ * QUInt2x4
  */
 UENUM(BlueprintType, Category="Torcher|Tensor", DisplayName="Torcher Tensor Scalar Type", meta=(
     Keywords="Torcher Tensor Scalar Type"
@@ -23,23 +37,23 @@ UENUM(BlueprintType, Category="Torcher|Tensor", DisplayName="Torcher Tensor Scal
 enum class ETorcherTensorScalarType : uint8
 {
 	Byte = c10::ScalarType::Byte UMETA(DisplayName="Byte"),
-	Char = c10::ScalarType::Char UMETA(DisplayName="Char"),
-	Short = c10::ScalarType::Short UMETA(DisplayName="Short"),
+	// Char = c10::ScalarType::Char UMETA(DisplayName="Char"),
+	// Short = c10::ScalarType::Short UMETA(DisplayName="Short"),
 	Int = c10::ScalarType::Int UMETA(DisplayName="Int"),
 	Long = c10::ScalarType::Long UMETA(DisplayName="Long"),
-	Half = c10::ScalarType::Half UMETA(DisplayName="Half"),
+	// Half = c10::ScalarType::Half UMETA(DisplayName="Half"),
 	Float = c10::ScalarType::Float UMETA(DisplayName="Float"),
 	Double = c10::ScalarType::Double UMETA(DisplayName="Double"),
-	ComplexHalf = c10::ScalarType::ComplexHalf UMETA(DisplayName="ComplexHalf"),
-	ComplexFloat = c10::ScalarType::ComplexFloat UMETA(DisplayName="ComplexFloat"),
-	ComplexDouble = c10::ScalarType::ComplexDouble UMETA(DisplayName="ComplexDouble"),
+	// ComplexHalf = c10::ScalarType::ComplexHalf UMETA(DisplayName="ComplexHalf"),
+	// ComplexFloat = c10::ScalarType::ComplexFloat UMETA(DisplayName="ComplexFloat"),
+	// ComplexDouble = c10::ScalarType::ComplexDouble UMETA(DisplayName="ComplexDouble"),
 	Boolean = c10::ScalarType::Bool UMETA(DisplayName="Boolean"),
-	QChar = c10::ScalarType::QInt8 UMETA(DisplayName="QChar"),
-	QByte = c10::ScalarType::QUInt8 UMETA(DisplayName="QByte"),
-	QInt = c10::ScalarType::QInt32 UMETA(DisplayName="QInt"),
-	BHalf = c10::ScalarType::BFloat16 UMETA(DisplayName="BHalf"),
-	Q4X2 = c10::ScalarType::QUInt4x2 UMETA(DisplayName="QUInt4x2"),
-	Q2X4 = c10::ScalarType::QUInt2x4 UMETA(DisplayName="QUInt2x4"),
+	// QChar = c10::ScalarType::QInt8 UMETA(DisplayName="QChar"),
+	// QByte = c10::ScalarType::QUInt8 UMETA(DisplayName="QByte"),
+	// QInt = c10::ScalarType::QInt32 UMETA(DisplayName="QInt"),
+	// BHalf = c10::ScalarType::BFloat16 UMETA(DisplayName="BHalf"),
+	// Q4X2 = c10::ScalarType::QUInt4x2 UMETA(DisplayName="QUInt4x2"),
+	// Q2X4 = c10::ScalarType::QUInt2x4 UMETA(DisplayName="QUInt2x4"),
 	Undefined = c10::ScalarType::Undefined UMETA(DisplayName="Undefined"),
 	TypesCount = c10::ScalarType::NumOptions UMETA(Hidden, DisplayName="Types Count")
 };
