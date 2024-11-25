@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "Tensors/TorcherTensorFloat.h"
 #include "MLP.generated.h"
 
 class UMMTokenizer;
@@ -24,10 +23,5 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tokens")
 	UMMTokenizer* Tokenizer;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Tokens")
-	UTorcherTensorFloat* FloatTensor;
-
-	UFUNCTION(BlueprintCallable, Category = "Tensors")
-	void InitTensors() noexcept;
+	
 };

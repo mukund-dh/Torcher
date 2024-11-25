@@ -5,10 +5,14 @@
 
 #define LOCTEXT_NAMESPACE "TorcherTensorFloat"
 
-UTorcherTensorFloat::UTorcherTensorFloat() noexcept
+UTorcherTensorFloat::UTorcherTensorFloat(const FObjectInitializer& ObjectInitializer) noexcept
+	: Super(ObjectInitializer)
 {
-	//SetDeviceType(ETorcherTensorDeviceType::Cpu);
-	ScalarType = ETorcherTensorScalarType::Float;
+	TensorScalarType = ETorcherTensorScalarType::Float;
 }
+
+// Explicit template instantiation
+template TArray<float> UTorcherTensorBase::GetData<float>() noexcept;
+template void UTorcherTensorBase::SetData<float>(const TArray<float>& InArray) noexcept;
 
 #undef LOCTEXT_NAMESPACE

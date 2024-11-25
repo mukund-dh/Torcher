@@ -52,8 +52,7 @@ public:
 	 */
 	UE_NODISCARD_CTOR
 	UTorcherTensorBase(const FObjectInitializer& ObjectInitializer) noexcept;
-
-protected:
+	
 	/*
 	 * Does Data own a tensor, and is the tensor defined??
 	 *
@@ -122,6 +121,54 @@ protected:
 	 * Set requires gradient on this tensor
 	 */
 	virtual void SetRequiresGradient(const bool bRequiresGrad) noexcept;
+
+	/*
+	 * Get the value of the Dimensions
+	 */
+	FORCEINLINE TArray<int64> GetDimensions() const { return Dimensions; }
+
+	/*
+	 * Get the value of the TorcherDeviceType
+	 */
+	FORCEINLINE ETorcherTensorDeviceType GetTensorDevice() const { return TensorDevice; }
+
+	/*
+	 * Get the value of the TensorScalarType
+	 */
+	FORCEINLINE ETorcherTensorScalarType GetTensorScalarType() const { return TensorScalarType; }
+
+	/*
+	 * Get the value of the Seed
+	 */
+	FORCEINLINE int64 GetSeed() const { return Seed; }
+
+	/*
+	 * Set the value of the Dimensions
+	 *
+	 * @param NewDimensions Array of int64 to set the dimensions to.
+	 */
+	FORCEINLINE void SetDimensions(const TArray<int64>& NewDimensions) { Dimensions = NewDimensions; }
+
+	/*
+	 * Set the value of the TorcherDeviceType
+	 *
+	 * @param NewDeviceType The type of the new torcher device
+	 */
+	FORCEINLINE void SetTensorDevice(ETorcherTensorDeviceType NewDeviceType) { TensorDevice = NewDeviceType; }
+
+	/*
+	 * Set the value of the TensorScalarType
+	 *
+	 * @param NewScalarType The type of the torcher scalar
+	 */
+	FORCEINLINE void SetTensorScalarType(ETorcherTensorScalarType NewScalarType) { TensorScalarType = NewScalarType; }
+
+	/*
+	 * Set the value of the Seed
+	 *
+	 * @param NewSeed The new seed value
+	 */
+	FORCEINLINE void SetSeed(int64 NewSeed) { Seed = NewSeed; }
 	
 private:
 	/*
@@ -133,3 +180,79 @@ private:
 	template <typename T>
 	std::vector<T> ConvertTensorToVector(const at::Tensor& InTensor);
 };
+
+template <typename T>
+void UTorcherTensorBase::SetData(const TArray<T>& InArray) noexcept
+{
+	// Don't set the Array data if we don't have a defined scalar type.
+	if (TensorScalarType == ETorcherTensorScalarType::Undefined)
+	{
+		UE_LOG(LogTorcherTensor, Error, TEXT("Invalid Scalar Type of Tensor encountered. Skipping."));
+		return;
+	}
+	
+	// Sanity Check; first ensure that we have enough elements in the InArray to fill the tensor.
+	int64 TotalElements = 1;
+	for (int64 Dim : Dimensions)
+	{
+		TotalElements *= Dim;
+	}
+
+	if (InArray.Num() != TotalElements)
+	{
+		UE_LOG(LogTorcherTensor, Error, TEXT("Number of elements in the InArray %d dom't match the expected number of elements %lld"), InArray.Num(), TotalElements);
+		return;
+	}
+	
+	// Get the dimensions as an std::vector<int64_t> 
+	std::vector<int64_t> Dims = std::vector<int64_t>(Dimensions.GetData(), Dimensions.GetData() + Dimensions.Num());
+
+	// Convert TArray to an std::Vector
+	std::vector<T> OutVec(InArray.GetData(), InArray.GetData() + InArray.Num());
+
+	// Set the Tensor Options dtype to the type we get from the TensorScalarType
+	torch::TensorOptions TensorOptions = torch::TensorOptions().dtype(TorcherEnums::Cast(TensorScalarType));
+	Data = MakeUnique<at::Tensor>(torch::from_blob(OutVec.data(), Dims, TensorOptions));
+}
+
+template <typename T>
+TArray<T> UTorcherTensorBase::GetData() noexcept
+{
+	// check if Data contains data
+	if (!IsDataDefined())
+	{
+		UE_LOG(LogTorcherTensor, Warning, TEXT("Data isn't defined. Skipping"));
+		return TArray<T>();
+	}
+	
+	TArray<T> OutArray;
+
+	// Sanity Check: see if the requested type is a supported type
+	if (!std::is_same_v<T, uint8> && !std::is_same_v<T, int32> &&
+		!std::is_same_v<T, int64> && !std::is_same_v<T, float> &&
+		!std::is_same_v<T, double> && !std::is_same_v<T, bool>)
+	{
+		UE_LOG(LogTorcherTensor, Error, TEXT("Requested type is not a supported type."));
+		return TArray<T>();
+	}
+
+	// Convert the data safely to a std::vector<T> and then pass it out to the OutArray.
+	std::vector<T> OutVec = ConvertTensorToVector<T>(Data->data());
+	OutArray.Append(&OutVec[0], OutVec.size());
+	return OutArray;
+}
+
+template <typename T>
+std::vector<T> UTorcherTensorBase::ConvertTensorToVector(const at::Tensor& InTensor)
+{
+	// Sanity check; Do this just in case we're called from a function without type checks
+	if (!std::is_same_v<T, uint8> && !std::is_same_v<T, int32> &&
+		!std::is_same_v<T, int64> && !std::is_same_v<T, float> &&
+		!std::is_same_v<T, double> && !std::is_same_v<T, bool>)
+	{
+		UE_LOG(LogTorcherTensor, Error, TEXT("Requested type is not a supported type."));
+		return std::vector<T>();
+	}
+
+	return std::vector<T>(InTensor.data_ptr<T>(), InTensor.data_ptr<T>() + InTensor.numel());
+}
