@@ -5,7 +5,7 @@
 #include "Macros/TorcherLogs.h"
 
 
-UTanHLayer::UTanHLayer(const FObjectInitializer& ObjectInitializer)
+/*UTanHLayer::UTanHLayer(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
@@ -14,4 +14,4 @@ at::Tensor UTanHLayer::operator()(const at::Tensor& InTensor) noexcept
 {
 	SetTensor(Out, torch::tanh(InTensor));
 	return *Out;
-}
+}*/

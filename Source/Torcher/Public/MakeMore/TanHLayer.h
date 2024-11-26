@@ -14,10 +14,10 @@ class TORCHER_API UTanHLayer : public UMLPLayerBase
 {
 	GENERATED_BODY()
 
-public:
+/*public:
 	UE_NODISCARD_CTOR
 	UTanHLayer(const FObjectInitializer& ObjectInitializer);
 	
 	// Overridden Forward
-	virtual at::Tensor operator()(const at::Tensor& InTensor) noexcept override;
+	virtual at::Tensor operator()(const at::Tensor& InTensor) noexcept override;*/
 };

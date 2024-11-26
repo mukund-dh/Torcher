@@ -17,7 +17,7 @@ class TORCHER_API UBatchNorm1DLayer : public UMLPLayerBase
 public:
 
 	// Constructor
-	UE_NODISCARD_CTOR
+	/*UE_NODISCARD_CTOR
 	UBatchNorm1DLayer(const FObjectInitializer& ObjectInitializer);
 
 	// Destructor
@@ -192,5 +192,5 @@ public:
 
 private:
 
-	std::vector<int64_t> dims;
+	std::vector<int64_t> dims;*/
 };

@@ -4,7 +4,7 @@
 #include "MakeMore/LinearLayer.h"
 #include "Macros/TorcherLogs.h"
 
-ULinearLayer::ULinearLayer(const FObjectInitializer& ObjectInitializer) noexcept
+/*ULinearLayer::ULinearLayer(const FObjectInitializer& ObjectInitializer) noexcept
 	: Super(ObjectInitializer)
 	, FanIn(27)
 	, FanOut(27)
@@ -76,4 +76,4 @@ float ULinearLayer::GetValueAtIndex(TArray<int32> IndexArray) const
 {
 	// Debug.
 	return (Weights && Weights->defined()) ? Weights->data()[IndexArray[0]][IndexArray[1]].item<float>() : INFINITY;
-}
+}*/

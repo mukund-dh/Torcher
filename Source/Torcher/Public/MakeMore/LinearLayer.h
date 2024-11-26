@@ -24,7 +24,7 @@ class TORCHER_API ULinearLayer : public UMLPLayerBase
 
 public:
 	// Constructor
-	UE_NODISCARD_CTOR
+	/*UE_NODISCARD_CTOR
 	ULinearLayer(const FObjectInitializer& ObjectInitializer) noexcept;
 
 	// Destructor to de-initialize the at::Tensor pointers
@@ -174,5 +174,5 @@ public:
 	FORCEINLINE void SetBiasFromTensor(const at::Tensor& NewBias) noexcept
 	{
 		SetTensor(Bias, NewBias);
-	}
+	}*/
 };

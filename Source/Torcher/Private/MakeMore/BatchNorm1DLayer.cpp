@@ -4,7 +4,7 @@
 #include "MakeMore/BatchNorm1DLayer.h"
 #include "Macros/TorcherLogs.h"
 
-UBatchNorm1DLayer::UBatchNorm1DLayer(const FObjectInitializer& ObjectInitializer)
+/*UBatchNorm1DLayer::UBatchNorm1DLayer(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, TensorDimensions({27, 27})
 	, Epsilon(std::numeric_limits<float>::epsilon())
@@ -135,4 +135,4 @@ at::Tensor UBatchNorm1DLayer::operator()(const at::Tensor& InTensor) noexcept
 	}
 	
 	return *Out;
-}
+}*/
