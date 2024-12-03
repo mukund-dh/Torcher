@@ -2,8 +2,11 @@
 
 
 #include "Layers/TorcherLayerBaseOptions.h"
+#include "Macros/TorcherPreProcMacros.h"
 
+TORCH_INCLUDES_START
 #include "torch/nn/module.h"
+TORCH_INCLUDES_END
 
 FTorcherLayerBaseOptions::FTorcherLayerBaseOptions() noexcept
 	: LayerName(TEXT("UNNAMED_LAYER"))

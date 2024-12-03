@@ -14,6 +14,7 @@ namespace torch::nn
 	class Module;
 }
 
+#define LOCTEXT_NAMESPACE "IITorcherLayer"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI, Blueprintable, BlueprintType, DisplayName = "Torcher Layer")
@@ -30,6 +31,8 @@ class TORCHER_API IITorcherLayer
 	GENERATED_BODY()
 
 protected:
+
+	bool bInitialized;
 
 	ETorcherTensorDeviceType LayerDeviceType;
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
@@ -106,13 +109,27 @@ public:
 	 */
 	virtual void SetBaseModule(torch::nn::Module* Value) noexcept;
 
+protected:
+	/*
+	 * Function that runs when IITorcherLayer::Forward is called
+	 *
+	 * @param Input Tensor to operate on
+	 * @param Output The resulting tensor
+	 * @return Did the layer forward successfully?
+	 */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Torcher|Layer Operations")
+	bool OnForward(const UTorcherTensorBase* InTensor, UTorcherTensorBase*& OutTensor);
+
+	virtual bool OnForward_Implementation(const UTorcherTensorBase* InTensor, UTorcherTensorBase*& OutTensor) noexcept;
 private:
 
-	void SetLayerDeviceType_Implementation(ETorcherTensorDeviceType NewDeviceType);
+	virtual void SetLayerDeviceType_Implementation(ETorcherTensorDeviceType NewDeviceType);
 	
-	bool SetGradientToZero_Implementation(bool SetToZero = true);
+	virtual bool SetGradientToZero_Implementation(bool SetToZero = true);
 	
-	bool Forward_Implementation(const UTorcherTensorBase* InTensor, UTorcherTensorBase*& OutTensor);
+	virtual bool Forward_Implementation(const UTorcherTensorBase* InTensor, UTorcherTensorBase*& OutTensor);
 
-	void GetParameters_Implementation(const UClass* Class, TMap<FString, UTorcherTensorBase*>& OutValues) const;
+	virtual void GetParameters_Implementation(const UClass* Class, TMap<FString, UTorcherTensorBase*>& OutValues) const;
 };
+
+#undef LOCTEXT_NAMESPACE

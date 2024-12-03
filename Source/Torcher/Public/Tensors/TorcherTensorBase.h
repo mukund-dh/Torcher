@@ -82,15 +82,15 @@ public:
 	 * @return The Value(s) stored in Data
 	 */
 	[[nodiscard]]
-	FORCEINLINE at::Tensor GetData() const noexcept
+	FORCEINLINE at::Tensor* GetData() const noexcept
 	{
 		// check if Data contains data
 		if (IsDataDefined())
 		{
 			UE_LOG(LogTorcherTensor, Warning, TEXT("Data isn't defined. Skipping"));
-			return at::Tensor();
+			return nullptr;
 		}
-		return *Data;
+		return Data.Get();
 	}
 
 	/*
