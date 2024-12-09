@@ -126,7 +126,7 @@ public:
 	 * Get the value of the Dimensions
 	 */
 	FORCEINLINE TArray<int64> GetDimensions() const { return Dimensions; }
-
+	
 	/*
 	 * Get the value of the TorcherDeviceType
 	 */

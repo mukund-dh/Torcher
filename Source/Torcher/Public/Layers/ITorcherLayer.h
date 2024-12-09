@@ -9,6 +9,8 @@
 
 #include "ITorcherLayer.generated.h"
 
+struct FTorcherLayerBaseOptions;
+
 namespace torch::nn
 {
 	class Module;
@@ -33,13 +35,21 @@ class TORCHER_API IITorcherLayer
 protected:
 
 	bool bInitialized;
-
+	
 	ETorcherTensorDeviceType LayerDeviceType;
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
 	UE_NODISCARD_CTOR
 	IITorcherLayer() noexcept;
+
+	/*
+	 * Initialize the layer data for this layer
+	 *
+	 * @return bool Is this layer initialized?
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Torcher|Layer Operations")
+	bool InitializeData();
 
 	/*
 	 * Set the libtorch device type for this layer
@@ -120,8 +130,22 @@ protected:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Torcher|Layer Operations")
 	bool OnForward(const UTorcherTensorBase* InTensor, UTorcherTensorBase*& OutTensor);
 
-	virtual bool OnForward_Implementation(const UTorcherTensorBase* InTensor, UTorcherTensorBase*& OutTensor) noexcept;
+	virtual bool OnForward_Implementation(const UTorcherTensorBase* InTensor, UTorcherTensorBase*& OutTensor);
+
+
+	/*
+	 * Function which runs when IITorcherLayer::InitializeData is called
+	 *
+	 * @return bool Is the layer initialized?
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Torcher|Layer Operations")
+	bool OnInitializeData();
+
+	virtual bool OnInitializeData_Implementation();
+	
 private:
+
+	virtual bool InitializeData_Implementation();
 
 	virtual void SetLayerDeviceType_Implementation(ETorcherTensorDeviceType NewDeviceType);
 	

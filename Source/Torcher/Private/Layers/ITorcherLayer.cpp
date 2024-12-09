@@ -27,13 +27,60 @@ void IITorcherLayer::SetBaseModule(torch::nn::Module* Value) noexcept
 }
 
 bool IITorcherLayer::OnForward_Implementation(const UTorcherTensorBase* InTensor,
-	UTorcherTensorBase*& OutTensor) noexcept
+	UTorcherTensorBase*& OutTensor)
 {
 	OutTensor = DuplicateObject(InTensor, nullptr);
-	return false;
-	/*throw std::logic_error(TCHAR_TO_UTF8(*FString::Printf(
+	throw std::logic_error(TCHAR_TO_UTF8(*FString::Printf(
 		TEXT("OnForward is not implemented in: `%ls`"),
-		*GetNameSafe(_getUObject()->GetClass()))));*/
+		*GetNameSafe(_getUObject()->GetClass()))));
+}
+
+bool IITorcherLayer::OnInitializeData_Implementation()
+{
+	throw std::logic_error(TCHAR_TO_UTF8(*FString::Printf(
+		TEXT("OnInitializeData is not implemented in: `%ls`"),
+		*GetNameSafe(_getUObject()->GetClass())
+	)));
+}
+
+bool IITorcherLayer::InitializeData_Implementation()
+{
+	if (bInitialized)
+		// The layer is already initialized
+		return true;
+
+	UObject* const LayerObject = _getUObject();
+	try
+	{
+		bInitialized = Execute_OnInitializeData(LayerObject);
+	}
+	catch (const std::exception& Exception)
+	{
+		bInitialized = false;
+
+		const std::string& ExceptionString = Exception.what();
+		UE_LOG(LogTorcherLayer,
+			Error,
+			TEXT("Unhandled Exception - %hs\nFailed to initialize layer of type `%ls`"),
+			ExceptionString.substr(0, ExceptionString.find("\n")).c_str(),
+			*GetNameSafe(LayerObject->GetClass())
+			);
+	}
+
+	if(!bInitialized)
+		return false;
+	
+	torch::nn::Module* const BaseModule = GetBaseModule();
+	if (UNLIKELY(BaseModule == nullptr))
+	{
+		bInitialized = false;
+		UE_LOG(LogTorcherLayer, Error, TEXT("Pointer in Torcher Layer `%ls` is not initialized"), *GetNameSafe(_getUObject()->GetClass()));
+		return bInitialized;
+	}
+
+	BaseModule->to(TorcherEnums::Cast(LayerDeviceType));
+	bInitialized = true;
+	return bInitialized;
 }
 
 void IITorcherLayer::SetLayerDeviceType_Implementation(ETorcherTensorDeviceType NewDeviceType)
@@ -53,7 +100,7 @@ bool IITorcherLayer::SetGradientToZero_Implementation(bool bSetToZero)
 
 bool IITorcherLayer::Forward_Implementation(const UTorcherTensorBase* InTensor, UTorcherTensorBase*& OutTensor)
 {
-	/*UObject* const LayerObject = _getUObject();
+	UObject* const LayerObject = _getUObject();
 	const ANSICHAR* const LayerClassName = TCHAR_TO_UTF8(*GetNameSafe(LayerObject->GetClass()));
 
 	const at::Tensor* const Data = InTensor ? InTensor->GetData() : nullptr;
@@ -94,7 +141,7 @@ bool IITorcherLayer::Forward_Implementation(const UTorcherTensorBase* InTensor, 
 			LayerClassName
 			);
 		return false;
-	}*/
+	}
 	
 	return true;
 }
