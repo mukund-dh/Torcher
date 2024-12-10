@@ -132,7 +132,6 @@ protected:
 
 	virtual bool OnForward_Implementation(const UTorcherTensorBase* InTensor, UTorcherTensorBase*& OutTensor);
 
-
 	/*
 	 * Function which runs when IITorcherLayer::InitializeData is called
 	 *
