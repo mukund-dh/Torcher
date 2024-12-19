@@ -47,7 +47,7 @@ bool UTorcherLayerLinear::OnForward_Implementation(const UTorcherTensorBase* InT
 			GivenChannels);
 		return false;
 	}
-
+	
 	OutTensor = DuplicateObject(InTensor, nullptr);
 	OutTensor->SetData((*Module)(InTensor->GetData()->to(c10::kFloat)));
 	return true;

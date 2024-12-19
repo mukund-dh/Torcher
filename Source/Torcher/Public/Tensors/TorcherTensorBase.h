@@ -237,7 +237,9 @@ TArray<T> UTorcherTensorBase::GetData() noexcept
 	}
 
 	// Convert the data safely to a std::vector<T> and then pass it out to the OutArray.
-	std::vector<T> OutVec = ConvertTensorToVector<T>(Data->data());
+	// But first, convert the tensor to a CPU tensor
+	at::Tensor cpu_tensor = Data->to(torch::kCPU);
+	std::vector<T> OutVec = ConvertTensorToVector<T>(cpu_tensor);
 	OutArray.Append(&OutVec[0], OutVec.size());
 	return OutArray;
 }
