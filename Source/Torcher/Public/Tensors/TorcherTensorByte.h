@@ -12,7 +12,7 @@
  * Torcher Tensor with a scalar type of bytes
  */
 UCLASS(Blueprintable, BlueprintType, DisplayName = "Torcher Tensor Byte")
-class TORCHER_API UTorcherTensorByte : public UTorcherTensorBase
+class TORCHER_API UTorcherTensorByte : public UObject, public ITorcherTensorBase
 {
 	GENERATED_BODY()
 public:

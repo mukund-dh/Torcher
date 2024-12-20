@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/Object.h"
+#include "UObject/Interface.h"
 #include "TorcherDeviceType.h"
 #include "Macros/TorcherLogs.h"
 #include "TorcherTensorScalarType.h"
@@ -15,11 +15,17 @@ TORCH_INCLUDES_END
 
 #include "TorcherTensorBase.generated.h"
 
+// DON'T MODIFY!!!!!
+UINTERFACE(MinimalAPI, Blueprintable, BlueprintType, DisplayName = "Torcher Tensor Base")
+class UTorcherTensorBase : public UInterface
+{
+	GENERATED_BODY()
+};
+
 /**
  * 
  */
-UCLASS(Abstract, Blueprintable)
-class TORCHER_API UTorcherTensorBase : public UObject
+class TORCHER_API ITorcherTensorBase
 {
 	GENERATED_BODY()
 
@@ -31,19 +37,15 @@ class TORCHER_API UTorcherTensorBase : public UObject
 	
 protected:
 	// The Dimensions of this tensor
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Torcher|Tensor Params")
 	TArray<int64> Dimensions;
 
 	// The Device Type of this tensor
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Torcher|Tensor Params")
 	ETorcherTensorDeviceType TensorDevice;
 
 	// The Scalar Type of this tensor
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Torcher|Tensor Params")
 	ETorcherTensorScalarType TensorScalarType;
 
 	// The Seed value for initializing the generator
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Torcher|Tensor Params")
 	int64 Seed;
 
 public:
@@ -51,7 +53,7 @@ public:
 	 * Constructor
 	 */
 	UE_NODISCARD_CTOR
-	UTorcherTensorBase(const FObjectInitializer& ObjectInitializer) noexcept;
+	ITorcherTensorBase();
 	
 	/*
 	 * Does Data own a tensor, and is the tensor defined??
@@ -182,7 +184,7 @@ private:
 };
 
 template <typename T>
-void UTorcherTensorBase::SetData(const TArray<T>& InArray) noexcept
+void ITorcherTensorBase::SetData(const TArray<T>& InArray) noexcept
 {
 	// Don't set the Array data if we don't have a defined scalar type.
 	if (TensorScalarType == ETorcherTensorScalarType::Undefined)
@@ -216,7 +218,7 @@ void UTorcherTensorBase::SetData(const TArray<T>& InArray) noexcept
 }
 
 template <typename T>
-TArray<T> UTorcherTensorBase::GetData() noexcept
+TArray<T> ITorcherTensorBase::GetData() noexcept
 {
 	// check if Data contains data
 	if (!IsDataDefined())
@@ -245,7 +247,7 @@ TArray<T> UTorcherTensorBase::GetData() noexcept
 }
 
 template <typename T>
-std::vector<T> UTorcherTensorBase::ConvertTensorToVector(const at::Tensor& InTensor)
+std::vector<T> ITorcherTensorBase::ConvertTensorToVector(const at::Tensor& InTensor)
 {
 	// Sanity check; Do this just in case we're called from a function without type checks
 	if (!std::is_same_v<T, uint8> && !std::is_same_v<T, int32> &&

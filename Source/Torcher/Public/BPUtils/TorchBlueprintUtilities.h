@@ -20,19 +20,19 @@ class TORCHER_API UTorchBlueprintUtilities : public UBlueprintFunctionLibrary
 public:
 
 	UFUNCTION(BlueprintCallable, Category="TestFunction")
-	static void TestTorchTensor(const UTorcherTensorBase* InTensor) noexcept;
+	static void TestTorchTensor(const TScriptInterface<ITorcherTensorBase> InTensor) noexcept;
 
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
-	static void InitTensorToRandn(UTorcherTensorBase* InTensor) noexcept;
+	static void InitTensorToRandn(TScriptInterface<ITorcherTensorBase> InTensor) noexcept;
 
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
-	static void InitTensorToZeros(UTorcherTensorBase* InTensor) noexcept;
+	static void InitTensorToZeros(TScriptInterface<ITorcherTensorBase> InTensor) noexcept;
 
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
-	static void InitTensorToOnes(UTorcherTensorBase* InTensor) noexcept;
+	static void InitTensorToOnes(TScriptInterface<ITorcherTensorBase> InTensor) noexcept;
 
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
-	static TArray<float> GetTensorAsFloatArray(UTorcherTensorBase* InTensor) noexcept;
+	static TArray<float> GetTensorAsFloatArray(TScriptInterface<ITorcherTensorBase> InTensor) noexcept;
 
 	static std::vector<int64_t> ConvertIntArrayToVector(const TArray<int64>& InArray);
 };

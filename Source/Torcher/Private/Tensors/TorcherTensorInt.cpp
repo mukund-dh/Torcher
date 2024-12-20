@@ -12,7 +12,7 @@ UTorcherTensorInt::UTorcherTensorInt(const FObjectInitializer& ObjectInitializer
 }
 
 // Explicit template instantiation
-template TArray<int32> UTorcherTensorBase::GetData<int32>() noexcept;
-template void UTorcherTensorBase::SetData<int32>(const TArray<int32>& InArray) noexcept;
+template TArray<int32> ITorcherTensorBase::GetData<int32>() noexcept;
+template void ITorcherTensorBase::SetData<int32>(const TArray<int32>& InArray) noexcept;
 
 #undef LOCTEXT_NAMESPACE

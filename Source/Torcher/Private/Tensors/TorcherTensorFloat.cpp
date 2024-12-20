@@ -12,7 +12,7 @@ UTorcherTensorFloat::UTorcherTensorFloat(const FObjectInitializer& ObjectInitial
 }
 
 // Explicit template instantiation
-template TArray<float> UTorcherTensorBase::GetData<float>() noexcept;
-template void UTorcherTensorBase::SetData<float>(const TArray<float>& InArray) noexcept;
+template TArray<float> ITorcherTensorBase::GetData<float>() noexcept;
+template void ITorcherTensorBase::SetData<float>(const TArray<float>& InArray) noexcept;
 
 #undef LOCTEXT_NAMESPACE

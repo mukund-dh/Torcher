@@ -12,7 +12,7 @@
  * Tensor with a scalar type of Integer
  */
 UCLASS(Blueprintable, BlueprintType, DisplayName = "Torcher Tensor Int")
-class TORCHER_API UTorcherTensorInt : public UTorcherTensorBase
+class TORCHER_API UTorcherTensorInt : public UObject, public ITorcherTensorBase
 {
 	GENERATED_BODY()
 

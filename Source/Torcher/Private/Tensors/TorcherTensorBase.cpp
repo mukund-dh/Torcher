@@ -3,9 +3,8 @@
 
 #include "Tensors/TorcherTensorBase.h"
 
-UTorcherTensorBase::UTorcherTensorBase(const FObjectInitializer& ObjectInitializer) noexcept
-	: Super(ObjectInitializer)
-	, Data(nullptr)
+ITorcherTensorBase::ITorcherTensorBase()
+	: Data(nullptr)
 	, Generator(nullptr)
 	, TensorDevice(ETorcherTensorDeviceType::Cpu)
 	, TensorScalarType(ETorcherTensorScalarType::Undefined)
@@ -13,7 +12,7 @@ UTorcherTensorBase::UTorcherTensorBase(const FObjectInitializer& ObjectInitializ
 {
 }
 
-void UTorcherTensorBase::SetData(const at::Tensor& InTensor) noexcept
+void ITorcherTensorBase::SetData(const at::Tensor& InTensor) noexcept
 {
 	// Set the TensorScalarType to the appropriate type if it's undefined
 	if (TensorScalarType == ETorcherTensorScalarType::Undefined)
@@ -45,12 +44,12 @@ void UTorcherTensorBase::SetData(const at::Tensor& InTensor) noexcept
 	}
 }
 
-bool UTorcherTensorBase::DoesRequireGradient() noexcept
+bool ITorcherTensorBase::DoesRequireGradient() noexcept
 {
 	return Data && Data->requires_grad();
 }
 
-void UTorcherTensorBase::SetRequiresGradient(const bool bRequiresGrad) noexcept
+void ITorcherTensorBase::SetRequiresGradient(const bool bRequiresGrad) noexcept
 {
 	if (Data)
 	{

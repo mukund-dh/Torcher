@@ -3,13 +3,13 @@
 
 #include "BPUtils/TorchBlueprintUtilities.h"
 
-void UTorchBlueprintUtilities::TestTorchTensor(const UTorcherTensorBase* InTensor) noexcept
+void UTorchBlueprintUtilities::TestTorchTensor(const TScriptInterface<ITorcherTensorBase> InTensor) noexcept
 {
 	
 	UE_LOG(LogTemp, Warning, TEXT("Tensor Initialized!"));
 }
 
-void UTorchBlueprintUtilities::InitTensorToRandn(UTorcherTensorBase* InTensor) noexcept
+void UTorchBlueprintUtilities::InitTensorToRandn(TScriptInterface<ITorcherTensorBase> InTensor) noexcept
 {
 	if (!InTensor->IsDataDefined())
 	{
@@ -37,7 +37,7 @@ void UTorchBlueprintUtilities::InitTensorToRandn(UTorcherTensorBase* InTensor) n
 	}
 }
 
-void UTorchBlueprintUtilities::InitTensorToZeros(UTorcherTensorBase* InTensor) noexcept
+void UTorchBlueprintUtilities::InitTensorToZeros(TScriptInterface<ITorcherTensorBase> InTensor) noexcept
 {
 	if (!InTensor->IsDataDefined())
 	{
@@ -66,7 +66,7 @@ void UTorchBlueprintUtilities::InitTensorToZeros(UTorcherTensorBase* InTensor) n
 	}
 }
 
-void UTorchBlueprintUtilities::InitTensorToOnes(UTorcherTensorBase* InTensor) noexcept
+void UTorchBlueprintUtilities::InitTensorToOnes(TScriptInterface<ITorcherTensorBase> InTensor) noexcept
 {
 	if (!InTensor->IsDataDefined())
 	{
@@ -95,7 +95,7 @@ void UTorchBlueprintUtilities::InitTensorToOnes(UTorcherTensorBase* InTensor) no
 	}
 }
 
-TArray<float> UTorchBlueprintUtilities::GetTensorAsFloatArray(UTorcherTensorBase* InTensor) noexcept
+TArray<float> UTorchBlueprintUtilities::GetTensorAsFloatArray(TScriptInterface<ITorcherTensorBase> InTensor) noexcept
 {
 	if (!InTensor->IsDataDefined())
 	{

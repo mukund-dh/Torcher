@@ -12,7 +12,7 @@
  * Tensor with a scalar type of float
  */
 UCLASS(Blueprintable, BlueprintType, DisplayName = "Torcher Tensor Float")
-class TORCHER_API UTorcherTensorFloat : public UTorcherTensorBase
+class TORCHER_API UTorcherTensorFloat : public UObject, public ITorcherTensorBase
 {
 	GENERATED_BODY()
 
