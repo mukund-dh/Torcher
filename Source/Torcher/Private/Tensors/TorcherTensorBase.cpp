@@ -56,3 +56,28 @@ void ITorcherTensorBase::SetRequiresGradient(const bool bRequiresGrad) noexcept
 		SetData(Data->set_requires_grad(bRequiresGrad));
 	}
 }
+
+ITorcherTensorBase::operator FString() const
+{
+	std::ostringstream Stream;
+	Stream << *this;
+	return Stream.str().c_str();
+}
+
+std::ostream& operator<<(std::ostream& OutStream, const ITorcherTensorBase& TorcherTensor)
+{
+	if (const at::Tensor* const Tensor = TorcherTensor.Data.Get())
+	{
+		OutStream << *Tensor;
+	}
+	return OutStream;
+}
+
+std::ostream& operator<<(std::ostream& OutStream, const TScriptInterface<const ITorcherTensorBase>& TorcherTensor)
+{
+	if (const ITorcherTensorBase* const Interface = TorcherTensor.GetInterface())
+	{
+		OutStream << *Interface;
+	}
+	return OutStream;
+}

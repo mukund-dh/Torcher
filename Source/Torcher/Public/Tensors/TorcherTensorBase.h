@@ -16,7 +16,7 @@ TORCH_INCLUDES_END
 #include "TorcherTensorBase.generated.h"
 
 // DON'T MODIFY!!!!!
-UINTERFACE(MinimalAPI, Blueprintable, BlueprintType, DisplayName = "Torcher Tensor Base")
+UINTERFACE(MinimalAPI, NotBlueprintable, BlueprintType, DisplayName = "Torcher Tensor Base")
 class UTorcherTensorBase : public UInterface
 {
 	GENERATED_BODY()
@@ -171,6 +171,38 @@ public:
 	 * @param NewSeed The new seed value
 	 */
 	FORCEINLINE void SetSeed(int64 NewSeed) { Seed = NewSeed; }
+
+	/*
+	 * Writes this tensor as aa string inside a stream by overloading the << operator
+	 *
+	 * @param OutStream Output Stream
+	 * @param TorcherTensor The Tensor
+	 * @return The modified stream
+	 */
+	friend std::ostream& operator<<(std::ostream& OutStream, const ITorcherTensorBase& TorcherTensor);
+
+	/**
+	 * Writes this tensor as a string inside a stream by overloading the << operator
+	 * 
+	 * @param OutStream Output stream
+	 * @param AtumTensor The tensor
+	 * @return The modified stream
+	 */
+	friend std::ostream& operator<<(std::ostream& OutStream, const TScriptInterface<ITorcherTensorBase>& TorcherTensor);
+	
+	/*
+	 * Returns a tensor as a string by overloading the FString cast operator
+	 */
+	[[nodiscard]]
+	explicit operator FString() const;
+
+	/*
+	 * Cast this tensor to a string
+	 *
+	 * @return This tensor as a string
+	 */
+	[[nodiscard]]
+	FORCEINLINE FString ToString() const { return static_cast<FString>(*this); }
 	
 private:
 	/*
