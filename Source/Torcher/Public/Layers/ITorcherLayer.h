@@ -101,24 +101,6 @@ public:
 		const UClass* Class,
 		TMap<FString, UTorcherTensorBase*>& OutValues) const;
 
-	/*
-	 * Getter for Module as its base class
-	 */
-	[[nodiscard]]
-	virtual const torch::nn::Module* GetBaseModule() const noexcept;
-
-	/*
-	 * Getter for Module as its base class
-	 */
-	[[nodiscard]]
-	FORCEINLINE torch::nn::Module* GetBaseModule() noexcept
-	{ return const_cast<torch::nn::Module*>(std::as_const(*this).GetBaseModule()); }
-
-	/*
-	 * Set the layer's base module using a base module
-	 */
-	virtual void SetBaseModule(torch::nn::Module* Value) noexcept;
-
 protected:
 	/*
 	 * Function that runs when IITorcherLayer::Forward is called
