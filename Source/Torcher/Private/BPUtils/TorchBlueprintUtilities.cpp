@@ -95,16 +95,16 @@ void UTorchBlueprintUtilities::InitTensorToOnes(TScriptInterface<ITorcherTensorB
 	}
 }
 
-TArray<float> UTorchBlueprintUtilities::GetTensorAsFloatArray(TScriptInterface<ITorcherTensorBase> InTensor) noexcept
+void UTorchBlueprintUtilities::GetTensorAsFloatArray(TScriptInterface<ITorcherTensorBase> InTensor, TArray<float>& OutValues, TArray<int64>& OutSizes) noexcept
 {
 	if (!InTensor->IsDataDefined())
 	{
 		UE_LOG(LogTorcherTensor, Warning, TEXT("InTensor not defined"));
-		return TArray<float>();
+		return;
 	}
 
-	TArray<float> OutArr = InTensor->GetData<float>();
-	return OutArr;
+	OutValues = InTensor->GetData<float>();
+	OutSizes = InTensor->GetDimensions();
 }
 
 std::vector<int64_t> UTorchBlueprintUtilities::ConvertIntArrayToVector(const TArray<int64>& InArray)

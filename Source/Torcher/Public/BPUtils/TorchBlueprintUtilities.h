@@ -32,7 +32,7 @@ public:
 	static void InitTensorToOnes(TScriptInterface<ITorcherTensorBase> InTensor) noexcept;
 
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor Operations")
-	static TArray<float> GetTensorAsFloatArray(TScriptInterface<ITorcherTensorBase> InTensor) noexcept;
+	static void GetTensorAsFloatArray(TScriptInterface<ITorcherTensorBase> InTensor, TArray<float>& OutValues, TArray<int64>& OutSizes) noexcept;
 
 	static std::vector<int64_t> ConvertIntArrayToVector(const TArray<int64>& InArray);
 };

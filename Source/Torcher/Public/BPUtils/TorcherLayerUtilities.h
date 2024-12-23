@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Tensors/TorcherTensorBase.h"
 #include "TorcherLayerUtilities.generated.h"
 
 /**
@@ -20,7 +21,6 @@ public:
 	 */
 	UE_NODISCARD_CTOR
 	UFUNCTION(BlueprintCallable, Category="Torcher|Layers", DisplayName = "Create Layer", meta =(
-		DeterminesOutputType = "Class",
 		CompactNodeTitle = "Create Layer",
 		Keywords = "Torcher Layer Create"
 	))

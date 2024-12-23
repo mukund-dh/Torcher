@@ -48,6 +48,9 @@ protected:
 	// The Seed value for initializing the generator
 	int64 Seed;
 
+	// The "label" of this tensor
+	FName TensorLabel;
+
 public:
 	/*
 	 * Constructor
@@ -203,6 +206,22 @@ public:
 	 */
 	[[nodiscard]]
 	FORCEINLINE FString ToString() const { return static_cast<FString>(*this); }
+
+	/*
+	 * Set the tensor label
+	 *
+	 * @param NewLabel The label of the tensor
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensors")
+	virtual void SetTensorLabel(const FName NewLabel) { TensorLabel = NewLabel; }
+
+	/*
+	 * Get the tensor label
+	 *
+	 * @return The label of the tensor
+	 */
+	UFUNCTION(BlueprintCallable, Category="Torcher|Tensors")
+	virtual FName GetTensorLabel() const { return TensorLabel; }
 	
 private:
 	/*

@@ -19,29 +19,6 @@ namespace torch::nn
 
 #define LOCTEXT_NAMESPACE "IITorcherLayer"
 
-USTRUCT(BlueprintType)
-struct FTorcherLayerParam
-{
-	GENERATED_BODY()
-
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Torcher|Layer Param")
-	FName ParamName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Torcher|Layer Param", meta = (MustImplement = "/Script/Torcher.TorcherTensorBase"))
-	UObject* Tensor;
-
-	FTorcherLayerParam() : ParamName(NAME_None), Tensor(nullptr)
-	{}
-
-	FTorcherLayerParam(FName ParameterName, UClass* TensorClass, TArray<int64> Sizes, ETorcherTensorDeviceType TensorDevice)
-	{
-		ParamName = ParameterName;
-		Tensor = UTorcherTensorUtilities::CreateRandnTensor(TensorClass, Sizes, TensorDevice);
-	}
-};
-
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI, NotBlueprintable, BlueprintType, DisplayName = "Torcher Layer")
 class UITorcherLayer : public UInterface
@@ -68,7 +45,7 @@ public:
 	 * Return a list of parameters this layer uses.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Layers")
-	virtual TArray<FTorcherLayerParam> GetParameters() const = 0;
+	virtual TArray<TScriptInterface<ITorcherTensorBase>> GetParameters() const = 0;
 };
 
 #undef LOCTEXT_NAMESPACE

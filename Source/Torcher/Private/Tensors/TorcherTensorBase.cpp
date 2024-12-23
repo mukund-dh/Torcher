@@ -9,6 +9,7 @@ ITorcherTensorBase::ITorcherTensorBase()
 	, TensorDevice(ETorcherTensorDeviceType::Cpu)
 	, TensorScalarType(ETorcherTensorScalarType::Undefined)
 	, Seed(2147483647)
+	, TensorLabel(NAME_None)
 {
 }
 
