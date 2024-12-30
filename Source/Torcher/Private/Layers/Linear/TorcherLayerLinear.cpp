@@ -4,13 +4,16 @@
 #include "Layers/Linear/TorcherLayerLinear.h"
 #include "BPUtils/TorcherTensorUtilities.h"
 #include "Tensors/TorcherTensorFloat.h"
+#include "UObject/Package.h"
 
 UTorcherLayerLinear::UTorcherLayerLinear(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	, LayerDeviceType(ETorcherTensorDeviceType::Cpu)
 	, WeightsDims(TArray<int64>{4, 4})
-	, BiasDims(TArray<int64>{4})
+	, bUseBias(true)
 {
+	// Set the bias to the last dimension in the weights
+	BiasDims = {WeightsDims.Last()};
 }
 
 void UTorcherLayerLinear::InitializeLayerParams()
@@ -26,5 +29,38 @@ TArray<TScriptInterface<ITorcherTensorBase>> UTorcherLayerLinear::GetParameters(
 {
 	TArray<TScriptInterface<ITorcherTensorBase>> Params;
 	Params.Add(Weights);
+	Params.Add(Bias);
 	return Params;
+}
+
+bool UTorcherLayerLinear::Forward(const TScriptInterface<ITorcherTensorBase>& Input,
+	TScriptInterface<ITorcherTensorBase>& Output) const
+{
+	at::Tensor OutTensor = torch::matmul(*Input->GetData(), *Weights->GetData());
+	if (bUseBias)
+	{
+		OutTensor = OutTensor.add(*Bias->GetData());
+	}
+	
+	auto* const TensorObject = NewObject<UObject>(GetTransientPackage(), UTorcherTensorFloat::StaticClass());
+	auto* const Tensor = CastChecked<ITorcherTensorBase>(TensorObject);
+
+	Tensor->SetTensorDevice(LayerDeviceType);
+	Tensor->SetData(OutTensor);
+
+	Output = TensorObject;
+	return true;
+}
+
+bool UTorcherLayerLinear::SetGradientToZero(bool bSetToNone)
+{
+	return true;
+}
+
+void UTorcherLayerLinear::CloneData(TScriptInterface<ITorcherTensorBase>& OutClone, UObject* Outer)
+{
+}
+
+void UTorcherLayerLinear::SetLayerDeviceType(ETorcherTensorDeviceType DeviceType)
+{
 }

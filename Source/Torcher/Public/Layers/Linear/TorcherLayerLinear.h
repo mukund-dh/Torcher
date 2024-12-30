@@ -35,6 +35,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Linear Layer|Params")
 	TArray<int64> BiasDims;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Linear Layer|Params")
+	bool bUseBias;
+
 	virtual void InitializeLayerParams() override;
 	virtual TArray<TScriptInterface<ITorcherTensorBase>> GetParameters() const override;
+	
+	virtual bool Forward(const TScriptInterface<ITorcherTensorBase>& Input, TScriptInterface<ITorcherTensorBase>& Output) const override;
+	
+	virtual bool SetGradientToZero(bool bSetToNone) override;
+	
+	virtual void CloneData(TScriptInterface<ITorcherTensorBase>& OutClone, UObject* Outer) override;
+
+	virtual void SetLayerDeviceType(ETorcherTensorDeviceType DeviceType) override;
 };
