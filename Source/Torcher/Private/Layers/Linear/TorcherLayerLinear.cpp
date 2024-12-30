@@ -36,6 +36,13 @@ TArray<TScriptInterface<ITorcherTensorBase>> UTorcherLayerLinear::GetParameters(
 bool UTorcherLayerLinear::Forward(const TScriptInterface<ITorcherTensorBase>& Input,
 	TScriptInterface<ITorcherTensorBase>& Output) const
 {
+	bool bIsBroadcastable = Weights->IsBroadcastableWith(Input);
+	if (!bIsBroadcastable)
+	{
+		UE_LOG(LogTorcherLayer, Error, TEXT("The provided input is not broadcastable with wieghts."));
+		return false;
+	}
+	
 	at::Tensor OutTensor = torch::matmul(*Input->GetData(), *Weights->GetData());
 	if (bUseBias)
 	{
@@ -54,6 +61,15 @@ bool UTorcherLayerLinear::Forward(const TScriptInterface<ITorcherTensorBase>& In
 
 bool UTorcherLayerLinear::SetGradientToZero(bool bSetToNone)
 {
+	if (Weights->GetData()->grad().defined())
+	{
+		Weights->GetData()->mutable_grad().zero_();
+	}
+
+	if (Bias->GetData()->grad().defined())
+	{
+		Bias->GetData()->mutable_grad().zero_();
+	}
 	return true;
 }
 
@@ -63,4 +79,7 @@ void UTorcherLayerLinear::CloneData(TScriptInterface<ITorcherTensorBase>& OutClo
 
 void UTorcherLayerLinear::SetLayerDeviceType(ETorcherTensorDeviceType DeviceType)
 {
+	LayerDeviceType = DeviceType;
+	Weights->SetTensorDevice(DeviceType);
+	Bias->SetTensorDevice(DeviceType);
 }

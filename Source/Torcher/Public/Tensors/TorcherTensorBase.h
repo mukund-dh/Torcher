@@ -188,7 +188,7 @@ public:
 	 * Writes this tensor as a string inside a stream by overloading the << operator
 	 * 
 	 * @param OutStream Output stream
-	 * @param AtumTensor The tensor
+	 * @param TorcherTensor The tensor
 	 * @return The modified stream
 	 */
 	friend std::ostream& operator<<(std::ostream& OutStream, const TScriptInterface<ITorcherTensorBase>& TorcherTensor);
@@ -222,6 +222,40 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category="Torcher|Tensors")
 	virtual FName GetTensorLabel() const { return TensorLabel; }
+
+	/*
+	 * See if it's possible to perform operations with the input tensor
+	 *
+	 * @param BroadcastTensor The tensor to test broadcasting with
+	 * @return Are the two tensors compatible?
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor")
+	virtual bool IsBroadcastableWith(const TScriptInterface<ITorcherTensorBase>& BroadcastTensor) const;
+
+	/*
+	 * Change the tensor's shape so that it is broadcastable with the other
+	 *
+	 * @param BroadcastTensor Tensor to broadcast to
+	 * @return was the broadcast successful?
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor")
+	virtual bool BroadcastTo(const TScriptInterface<ITorcherTensorBase>& BroadcastTensor) const;
+
+	/*
+	 * Removes the tensor from the global gradient graph
+	 *
+	 * @param OutDetachedTensor The original tensor, but detached
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor")
+	virtual void Detach(TScriptInterface<ITorcherTensorBase>& OutDetachedTensor) const;
+
+	/*
+	 * Get the current gradient
+	 *
+	 * @param OutGradient Tensor's gradient as another tensor
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor")
+	virtual void GetGradient(TScriptInterface<ITorcherTensorBase>& OutGradient) const;
 	
 private:
 	/*

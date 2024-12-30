@@ -65,6 +65,65 @@ ITorcherTensorBase::operator FString() const
 	return Stream.str().c_str();
 }
 
+bool ITorcherTensorBase::IsBroadcastableWith(const TScriptInterface<ITorcherTensorBase>& BroadcastTensor) const
+{
+	if (!IsDataDefined() || BroadcastTensor == nullptr || !BroadcastTensor->IsDataDefined())
+		return false;
+
+	const int32 DimsCount = GetDimensions().Num();
+	TArray<int64> BroadcastDims = BroadcastTensor->GetDimensions();
+	int32 BroadcastDimsCount = BroadcastDims.Num();
+
+	if (DimsCount < BroadcastDimsCount)
+		return BroadcastTensor->IsBroadcastableWith(_getUObject());
+
+	while (DimsCount != BroadcastDimsCount)
+	{
+		BroadcastDims.Insert(1LL, 0);
+		++BroadcastDimsCount;
+	}
+
+	for (int32 Index = DimsCount - 1; Index >= 0; --Index)
+	{
+		const int32 BroadcastSize = BroadcastDims[Index];
+		if (
+			const int32 Size = GetDimensions()[Index];
+			Size == 0LL || BroadcastSize == 0LL || (Size != BroadcastSize && Size != 1LL && BroadcastSize != 1LL)
+			)
+			return false;
+	}
+
+	return true;
+}
+
+bool ITorcherTensorBase::BroadcastTo(const TScriptInterface<ITorcherTensorBase>& BroadcastTensor) const
+{
+	if (!IsBroadcastableWith(BroadcastTensor))
+		return false;
+
+	TArray<int64> BroadcastDims = BroadcastTensor->GetDimensions();
+
+	const int64* const SizeData = BroadcastDims.GetData();
+	*Data = at::broadcast_to(*Data, at::IntArrayRef(SizeData, SizeData + BroadcastDims.Num()));
+	return true;
+}
+
+void ITorcherTensorBase::Detach(TScriptInterface<ITorcherTensorBase>& OutDetachedTensor) const
+{
+	if (OutDetachedTensor = IsDataDefined() ? DuplicateObject(_getUObject(), nullptr) : nullptr; OutDetachedTensor)
+	{
+		OutDetachedTensor->SetData(Data->detach());
+	}
+}
+
+void ITorcherTensorBase::GetGradient(TScriptInterface<ITorcherTensorBase>& OutGradient) const
+{
+	if (OutGradient = IsDataDefined() ? DuplicateObject(_getUObject(), nullptr) : nullptr; OutGradient)
+	{
+		OutGradient->SetData(Data->grad());
+	}
+}
+
 std::ostream& operator<<(std::ostream& OutStream, const ITorcherTensorBase& TorcherTensor)
 {
 	if (const at::Tensor* const Tensor = TorcherTensor.Data.Get())
