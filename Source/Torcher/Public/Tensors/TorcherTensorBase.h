@@ -262,7 +262,8 @@ public:
 	 *
 	 * @return the zero gradient
 	 */
-	virtual at::Tensor SetGradientToZero() const;
+	UFUNCTION(BlueprintCallable, Category = "Torcher|Tensor")
+	virtual TScriptInterface<ITorcherTensorBase> SetGradientToZero() const;
 	
 private:
 	/*

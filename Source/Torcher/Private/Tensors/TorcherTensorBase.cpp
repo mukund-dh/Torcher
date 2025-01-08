@@ -2,6 +2,7 @@
 
 
 #include "Tensors/TorcherTensorBase.h"
+#include "UObject/Package.h"
 
 ITorcherTensorBase::ITorcherTensorBase()
 	: Data(nullptr)
@@ -124,9 +125,16 @@ void ITorcherTensorBase::GetGradient(TScriptInterface<ITorcherTensorBase>& OutGr
 	}
 }
 
-at::Tensor ITorcherTensorBase::SetGradientToZero() const
+TScriptInterface<ITorcherTensorBase> ITorcherTensorBase::SetGradientToZero() const
 {
-	return GetData()->mutable_grad().zero_();
+	at::Tensor ZeroTensor = GetData()->mutable_grad().zero_();
+
+	auto* const TensorObject = NewObject<UObject>(GetTransientPackage());
+	auto* const Tensor = CastChecked<ITorcherTensorBase>(TensorObject);
+
+	Tensor->SetTensorDevice(GetTensorDevice());
+	Tensor->SetData(ZeroTensor);
+	return TensorObject;
 }
 
 std::ostream& operator<<(std::ostream& OutStream, const ITorcherTensorBase& TorcherTensor)
