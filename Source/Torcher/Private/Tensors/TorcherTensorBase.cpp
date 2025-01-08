@@ -124,6 +124,11 @@ void ITorcherTensorBase::GetGradient(TScriptInterface<ITorcherTensorBase>& OutGr
 	}
 }
 
+at::Tensor ITorcherTensorBase::SetGradientToZero() const
+{
+	return GetData()->mutable_grad().zero_();
+}
+
 std::ostream& operator<<(std::ostream& OutStream, const ITorcherTensorBase& TorcherTensor)
 {
 	if (const at::Tensor* const Tensor = TorcherTensor.Data.Get())

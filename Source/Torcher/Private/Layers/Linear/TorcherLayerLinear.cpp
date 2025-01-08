@@ -63,12 +63,12 @@ bool UTorcherLayerLinear::SetGradientToZero(bool bSetToNone)
 {
 	if (Weights->GetData()->grad().defined())
 	{
-		Weights->GetData()->mutable_grad().zero_();
+		Weights->SetGradientToZero();
 	}
 
 	if (Bias->GetData()->grad().defined())
 	{
-		Bias->GetData()->mutable_grad().zero_();
+		Bias->SetGradientToZero();
 	}
 	return true;
 }

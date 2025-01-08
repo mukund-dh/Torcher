@@ -19,6 +19,11 @@
 			"Name": "Torcher",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "TorcherEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	]
 }
