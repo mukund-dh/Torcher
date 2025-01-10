@@ -19,7 +19,12 @@ public class TorcherEditor : ModuleRules
                 "CoreUObject",
                 "Engine",
                 "Slate",
-                "SlateCore"
+                "SlateCore",
+                "InputCore",
+                "Projects",
+                "AssetTools",
+                "Torcher",
+                "UnrealEd"
             }
         );
     }
