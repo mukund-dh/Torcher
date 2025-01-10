@@ -24,7 +24,8 @@ public class TorcherEditor : ModuleRules
                 "Projects",
                 "AssetTools",
                 "Torcher",
-                "UnrealEd"
+                "UnrealEd",
+                "PropertyEditor"
             }
         );
     }
