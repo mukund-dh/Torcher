@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Models/TorcherModelBase.h"
 #include "WorkflowOrientedApp/WorkflowCentricApplication.h"
 
 /**
@@ -18,7 +19,7 @@ public:
 	void InitEditor(const EToolkitMode::Type Mode, const TSharedPtr<class IToolkitHost>& InitToolkitHost, UObject* InObject);
 
 private:
-	class UTorcherModelBase* _workingAsset = nullptr;
+	UTorcherModelBase* _workingAsset = nullptr;
 
 public: // FAssetEditorToolkit interface
 	virtual FName GetToolkitFName() const override { return FName(TEXT("TorcherGraphApp")); }
@@ -27,7 +28,7 @@ public: // FAssetEditorToolkit interface
 	virtual FLinearColor GetWorldCentricTabColorScale() const override { return FLinearColor(0.3f, 0.2f, 0.5f, 0.5f); }
 	virtual FString GetDocumentationLink() const override { return TEXT(""); }
 
-	class UTorcherModelBase* GetWorkingAsset() { return _workingAsset; }
+	UTorcherModelBase* GetWorkingAsset() { return _workingAsset; }
 	
 	virtual void OnToolkitHostingStarted(const TSharedRef<IToolkit>& Toolkit) override { }
 	virtual void OnToolkitHostingFinished(const TSharedRef<IToolkit>& Toolkit) override { }

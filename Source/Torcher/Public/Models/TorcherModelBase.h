@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Layers/ITorcherLayer.h"
 #include "TorcherModelBase.generated.h"
 
 /**
@@ -16,4 +17,7 @@ class TORCHER_API UTorcherModelBase : public UObject
 public:
 
 	UTorcherModelBase(const FObjectInitializer& ObjectInitializer);
+
+	UPROPERTY(EditAnywhere)
+	TArray<TScriptInterface<IITorcherLayer>> ModelLayers;
 };

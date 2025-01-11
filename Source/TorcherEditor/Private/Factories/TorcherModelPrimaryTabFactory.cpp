@@ -3,7 +3,7 @@
 
 #include "Factories/TorcherModelPrimaryTabFactory.h"
 #include "TorcherGraph/TorcherModelGraph.h"
-#include "Models/TorcherModelBase.h"
+// #include "Models/TorcherModelBase.h"
 #include "PropertyEditorModule.h"
 
 

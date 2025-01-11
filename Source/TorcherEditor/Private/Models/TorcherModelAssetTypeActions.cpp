@@ -12,7 +12,7 @@ FTorcherModelAssetTypeActions::FTorcherModelAssetTypeActions(EAssetTypeCategorie
 
 UClass* FTorcherModelAssetTypeActions::GetSupportedClass() const
 {
-	return UTorcherModelBase::StaticClass();
+	return UObject::StaticClass();
 }
 
 FText FTorcherModelAssetTypeActions::GetName() const
@@ -31,16 +31,16 @@ uint32 FTorcherModelAssetTypeActions::GetCategories()
 }
 
 void FTorcherModelAssetTypeActions::OpenAssetEditor(const TArray<UObject*>& InObjects,
-	TSharedPtr<IToolkitHost> EditWithinLevelEditor)
+                                                    TSharedPtr<IToolkitHost> EditWithinLevelEditor)
 {
 	EToolkitMode::Type Mode = EditWithinLevelEditor.IsValid() ? EToolkitMode::WorldCentric : EToolkitMode::Standalone;
 	for (UObject* _object : InObjects)
 	{
-		UTorcherModelBase* TorchModel = Cast<UTorcherModelBase>(_object);
-		if (TorchModel != nullptr)
+		// UTorcherModelBase* TorchModel = Cast<UTorcherModelBase>(_object);
+		if (_object != nullptr)
 		{
 			TSharedRef<TorcherModelGraph> editor(new TorcherModelGraph);
-			editor->InitEditor(Mode, EditWithinLevelEditor, TorchModel);
+			editor->InitEditor(Mode, EditWithinLevelEditor, _object);
 		}
 	}
 }

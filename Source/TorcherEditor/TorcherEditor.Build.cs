@@ -5,7 +5,8 @@ public class TorcherEditor : ModuleRules
     public TorcherEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-
+        bUseRTTI = true;
+        
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
