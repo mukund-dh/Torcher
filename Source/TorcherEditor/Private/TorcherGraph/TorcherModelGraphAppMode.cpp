@@ -4,19 +4,32 @@
 #include "TorcherGraph/TorcherModelGraphAppMode.h"
 #include "TorcherGraph/TorcherModelGraph.h"
 #include "Factories/TorcherModelPrimaryTabFactory.h"
+#include "Factories/TorcherModelPropertiesTabFactory.h"
 
 TorcherModelGraphAppMode::TorcherModelGraphAppMode(TSharedPtr<TorcherModelGraph> App)
 	: FApplicationMode(TEXT("TorcherModelGraphAppMode"))
 {
 	_app = App;
 	_tabs.RegisterFactory(MakeShareable(new TorcherModelPrimaryTabFactory(App)));
+	_tabs.RegisterFactory(MakeShareable(new TorcherModelPropertiesTabFactory(App)));
 
 	TabLayout = FTabManager::NewLayout("TorcherModelGraphAppModeV1")
 	->AddArea(
-		FTabManager::NewPrimaryArea()->SetOrientation(Orient_Vertical)
+		FTabManager::NewPrimaryArea()
+		->SetOrientation(Orient_Vertical)
 		->Split(
-			FTabManager::NewStack()
-			->AddTab(FName(TEXT("TorcherModelGraphPrimaryTab")), ETabState::OpenedTab)
+			FTabManager::NewSplitter()
+			->SetOrientation(Orient_Horizontal)
+			->Split(
+				FTabManager::NewStack()
+				->SetSizeCoefficient(0.75)
+				->AddTab(FName(TEXT("TorcherModelGraphPrimaryTab")), ETabState::OpenedTab)
+			)
+			->Split(
+				FTabManager::NewStack()
+				->SetSizeCoefficient(0.25)
+				->AddTab(FName(TEXT("TorcherModelGraphPropertiesTab")), ETabState::OpenedTab)
+			)
 		)
 	);
 }

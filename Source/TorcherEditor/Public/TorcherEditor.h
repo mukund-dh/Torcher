@@ -2,9 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
-#include "Models/TorcherModelAssetTypeActions.h"
+#include "Styling/SlateStyle.h"
 
-// static EAssetTypeCategories::Type Torcher_AssetCategory;
 
 class FTorcherEditorModule : public IModuleInterface
 {
@@ -12,5 +11,5 @@ public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
 private:
-    TSharedPtr<FTorcherModelAssetTypeActions>TorcherModelAssetTypeActions;
+    TSharedPtr<FSlateStyleSet> TorcherStyleSet = nullptr;
 };
