@@ -3,9 +3,10 @@
 
 #include "Factories/TorcherModelPrimaryTabFactory.h"
 #include "TorcherGraph/TorcherModelGraph.h"
-// #include "Models/TorcherModelBase.h"
 #include "PropertyEditorModule.h"
-
+#include "GraphEditor.h"
+#include "Editor/UnrealEd/Public/Kismet2/BlueprintEditorUtils.h"
+#include "Kismet2/KismetEditorUtilities.h"
 
 TorcherModelPrimaryTabFactory::TorcherModelPrimaryTabFactory(TSharedPtr<TorcherModelGraph> App)
 	: FWorkflowTabFactory(FName("TorcherModelGraphPrimaryTab"), App)
@@ -24,8 +25,9 @@ TSharedRef<SWidget> TorcherModelPrimaryTabFactory::CreateTabBody(const FWorkflow
 				.FillHeight(1.0f)
 				.HAlign(HAlign_Fill)
 				[
-					SNew(STextBlock)
-					.Text(FText::FromString(TEXT("TORCHER EDITOR")))
+					SNew(SGraphEditor)
+					.IsEditable(true)
+					.GraphToEdit(app->GetWorkingGraph())
 				];
 }
 

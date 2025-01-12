@@ -20,6 +20,8 @@ public:
 
 private:
 	UTorcherModelBase* _workingAsset = nullptr;
+	
+	class UEdGraph* _workingGraph = nullptr;
 
 public: // FAssetEditorToolkit interface
 	virtual FName GetToolkitFName() const override { return FName(TEXT("TorcherGraphApp")); }
@@ -29,6 +31,8 @@ public: // FAssetEditorToolkit interface
 	virtual FString GetDocumentationLink() const override { return TEXT(""); }
 
 	UTorcherModelBase* GetWorkingAsset() { return _workingAsset; }
+
+	class UEdGraph* GetWorkingGraph() { return _workingGraph; }
 	
 	virtual void OnToolkitHostingStarted(const TSharedRef<IToolkit>& Toolkit) override { }
 	virtual void OnToolkitHostingFinished(const TSharedRef<IToolkit>& Toolkit) override { }
