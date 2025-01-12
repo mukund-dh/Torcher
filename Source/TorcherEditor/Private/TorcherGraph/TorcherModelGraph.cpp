@@ -5,6 +5,7 @@
 #include "TorcherGraph/TorcherModelGraphAppMode.h"
 #include "Models/TorcherModelBase.h"
 #include "Kismet2/BlueprintEditorUtils.h"
+#include "TorcherGraph/TorcherGraphSchema.h"
 
 void TorcherModelGraph::RegisterTabSpawners(const TSharedRef<FTabManager>& tabManager)
 {
@@ -23,7 +24,7 @@ void TorcherModelGraph::InitEditor(const EToolkitMode::Type Mode, const TSharedP
 		_workingAsset,
 		NAME_None,
 		UEdGraph::StaticClass(),
-		UEdGraphSchema::StaticClass()
+		UTorcherGraphSchema::StaticClass()
 	);
 
 	InitAssetEditor(
