@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Layers/ITorcherLayer.h"
+#include "TorcherGraph/TorcherRuntimeGraph.h"
 #include "TorcherModelBase.generated.h"
 
 /**
@@ -18,6 +18,6 @@ public:
 
 	UTorcherModelBase(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere)
-	TArray<TScriptInterface<IITorcherLayer>> ModelLayers;
+	UPROPERTY()
+	UTorcherRuntimeGraph* ModelGraph = nullptr;
 };

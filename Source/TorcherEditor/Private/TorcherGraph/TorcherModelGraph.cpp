@@ -5,7 +5,9 @@
 #include "TorcherGraph/TorcherModelGraphAppMode.h"
 #include "Models/TorcherModelBase.h"
 #include "Kismet2/BlueprintEditorUtils.h"
+#include "Nodes/TorcherGraphNode.h"
 #include "TorcherGraph/TorcherGraphSchema.h"
+#include "TorcherGraph/TorcherRuntimeGraph.h"
 
 void TorcherModelGraph::RegisterTabSpawners(const TSharedRef<FTabManager>& tabManager)
 {
@@ -39,4 +41,127 @@ void TorcherModelGraph::InitEditor(const EToolkitMode::Type Mode, const TSharedP
 
 	AddApplicationMode(TEXT("TorcherModelGraphAppMode"), MakeShareable(new TorcherModelGraphAppMode(SharedThis(this))));
 	SetCurrentMode(TEXT("TorcherModelGraphAppMode"));
+
+	UpdateGraphFromWorkingAsset();
+
+	_graphChangeDelegateHandle = _workingGraph->AddOnGraphChangedHandler(
+		FOnGraphChanged::FDelegate::CreateSP(this, &TorcherModelGraph::OnGraphChanged)
+	);
+}
+
+void TorcherModelGraph::OnClose()
+{
+	UpdateWorkingAssetFromGraph();
+	_workingGraph->RemoveOnGraphChangedHandler(_graphChangeDelegateHandle);
+	FAssetEditorToolkit::OnClose();
+}
+
+void TorcherModelGraph::OnGraphChanged(const FEdGraphEditAction& EditAction)
+{
+	UpdateWorkingAssetFromGraph();
+}
+
+void TorcherModelGraph::UpdateWorkingAssetFromGraph()
+{
+	if (_workingAsset == nullptr or _workingGraph == nullptr)
+		return;
+
+	UTorcherRuntimeGraph* RuntimeGraph = NewObject<UTorcherRuntimeGraph>(_workingAsset);
+	_workingAsset->ModelGraph = RuntimeGraph;
+
+	TArray<std::pair<FGuid, FGuid>> Connections;
+	TMap<FGuid, UTorcherRuntimePin*> IdToPinMap;
+
+	for (UEdGraphNode* UiNode : _workingGraph->Nodes)
+	{
+		UTorcherRuntimeNode* RuntimeNode = NewObject<UTorcherRuntimeNode>(RuntimeGraph);
+		RuntimeNode->Location = FVector2D(UiNode->NodePosX, UiNode->NodePosY);
+
+		for (UEdGraphPin* Pin : UiNode->Pins)
+		{
+			UTorcherRuntimePin* RuntimePin = NewObject<UTorcherRuntimePin>(RuntimeNode);
+			RuntimePin->PinName = Pin->PinName;
+			RuntimePin->PinId = Pin->PinId;
+
+			if (Pin->HasAnyConnections() && Pin->Direction == EGPD_Output)
+			{
+				std::pair<FGuid, FGuid> Connection = std::make_pair(Pin->PinId, Pin->LinkedTo[0]->PinId);
+				Connections.Add(Connection);
+			}
+
+			IdToPinMap.Add(Pin->PinId, RuntimePin);
+			if (Pin->Direction == EGPD_Input)
+			{
+				RuntimeNode->InputPin = RuntimePin;
+			}
+			else
+			{
+				RuntimeNode->OutputPins.Add(RuntimePin);
+			}
+		}
+
+		RuntimeGraph->GraphNodes.Add(RuntimeNode);
+	}
+
+	for (std::pair<FGuid, FGuid> connection : Connections)
+	{
+		UTorcherRuntimePin* A = IdToPinMap[connection.first];
+		UTorcherRuntimePin* B = IdToPinMap[connection.second];
+		A->Connection = B;
+	}
+}
+
+void TorcherModelGraph::UpdateGraphFromWorkingAsset()
+{
+	if (_workingAsset->ModelGraph == nullptr)
+		return;
+
+	TArray<std::pair<FGuid, FGuid>> Connections;
+	TMap<FGuid, UEdGraphPin*> IdToPinMap;
+
+	for (UTorcherRuntimeNode* RuntimeNode : _workingAsset->ModelGraph->GraphNodes)
+	{
+		UTorcherGraphNode* NewNode = NewObject<UTorcherGraphNode>(_workingGraph);
+		NewNode->CreateNewGuid();
+
+		NewNode->NodePosX = RuntimeNode->Location.X;
+		NewNode->NodePosY = RuntimeNode->Location.Y;
+
+		if (RuntimeNode->InputPin != nullptr)
+		{
+			UTorcherRuntimePin* Pin = RuntimeNode->InputPin;
+			UEdGraphPin* UiPin = NewNode->CreateCustomPin(EGPD_Input, Pin->PinName);
+			UiPin->PinId = Pin->PinId;
+
+			if (Pin->Connection != nullptr)
+			{
+				Connections.Add(std::make_pair(Pin->PinId, Pin->Connection->PinId));
+			}
+
+			IdToPinMap.Add(Pin->PinId, UiPin);
+		}
+
+		for (UTorcherRuntimePin* Pin : RuntimeNode->OutputPins)
+		{
+			UEdGraphPin* UiPin = NewNode->CreateCustomPin(EGPD_Output, Pin->PinName);
+			UiPin->PinId = Pin->PinId;
+
+			if (Pin->Connection != nullptr)
+			{
+				Connections.Add(std::make_pair(Pin->PinId, Pin->Connection->PinId));
+			}
+
+			IdToPinMap.Add(Pin->PinId, UiPin);
+		}
+
+		_workingGraph->AddNode(NewNode, true, true);
+	}
+
+	for (std::pair<FGuid, FGuid> connection : Connections)
+	{
+		UEdGraphPin* A = IdToPinMap[connection.first];
+		UEdGraphPin* B = IdToPinMap[connection.second];
+		A->LinkedTo.Add(B);
+		B->LinkedTo.Add(A);
+	}
 }
