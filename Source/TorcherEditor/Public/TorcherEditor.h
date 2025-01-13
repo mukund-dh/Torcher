@@ -12,4 +12,5 @@ public:
     virtual void ShutdownModule() override;
 private:
     TSharedPtr<FSlateStyleSet> TorcherStyleSet = nullptr;
+    TSharedPtr<struct FTorcherPinFactory> PinFactory = nullptr;
 };

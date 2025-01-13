@@ -2,6 +2,7 @@
 
 
 #include "TorcherGraph/TorcherGraphSchema.h"
+#include "Nodes/TorcherGraphNode.h"
 
 void UTorcherGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
@@ -17,34 +18,37 @@ void UTorcherGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Conte
 	ContextMenuBuilder.AddAction(NewNodeAction);
 }
 
-UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location,
-	bool bSelectNewNode)
+const FPinConnectionResponse UTorcherGraphSchema::CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const
 {
-	UEdGraphNode* result = NewObject<UEdGraphNode>(ParentGraph);
+	if (A == nullptr || B == nullptr)
+		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Couldn't find valid pins"));
+
+	if (A->Direction == B->Direction)
+		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Can't connect two pins of same direction"));
+
+	return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_AB, TEXT("CONNECTION SUCCESSFUL"));
+}
+
+UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location,
+                                            bool bSelectNewNode)
+{
+	UTorcherGraphNode* result = NewObject<UTorcherGraphNode>(ParentGraph);
+	result->CreateNewGuid();
+	
 	result->NodePosX = Location.X;
 	result->NodePosY = Location.Y;
 
-	result->CreatePin(
-		EGPD_Input,
-		TEXT("Inputs"),
-		TEXT("SomeInput")
-	);
+	UEdGraphPin* InputPin = result->CreateCustomPin(EEdGraphPinDirection::EGPD_Input, TEXT("SomeInput"));
+	result->CreateCustomPin(EEdGraphPinDirection::EGPD_Output, TEXT("Output1"));
+	result->CreateCustomPin(EEdGraphPinDirection::EGPD_Output, TEXT("Output2"));
 
-	result->CreatePin(
-		EGPD_Output,
-		TEXT("Outputs"),
-		TEXT("Output1")
-	);
-
-	result->CreatePin(
-		EGPD_Output,
-		TEXT("Oututs"),
-		TEXT("Output2")
-	);
-
+	if (FromPin != nullptr)
+	{
+		result->GetSchema()->TryCreateConnection(FromPin, InputPin);
+	}
+	
 	ParentGraph->Modify();
 	ParentGraph->AddNode(result, true, true);
 
 	return result;
-	// return FEdGraphSchemaAction::PerformAction(ParentGraph, FromPin, Location, bSelectNewNode);
 }
