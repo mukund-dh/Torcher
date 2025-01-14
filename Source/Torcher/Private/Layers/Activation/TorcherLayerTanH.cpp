@@ -7,8 +7,9 @@
 
 UTorcherLayerTanH::UTorcherLayerTanH(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, LayerDeviceType(ETorcherTensorDeviceType::Cpu)
 {
+	TanHLayerOptions.LayerDeviceType = ETorcherTensorDeviceType::Cpu;
+	TanHLayerOptions.SetLayerName(TEXT("TANH LAYER"));
 }
 
 void UTorcherLayerTanH::InitializeLayerParams()
@@ -29,7 +30,7 @@ bool UTorcherLayerTanH::Forward(const TScriptInterface<ITorcherTensorBase>& Inpu
 	auto* const TensorObject = NewObject<UObject>(GetTransientPackage(), UTorcherTensorFloat::StaticClass());
 	auto* const Tensor = CastChecked<ITorcherTensorBase>(TensorObject);
 
-	Tensor->SetTensorDevice(LayerDeviceType);
+	Tensor->SetTensorDevice(TanHLayerOptions.LayerDeviceType);
 	Tensor->SetData(OutTensor);
 
 	Output = TensorObject;
@@ -47,6 +48,6 @@ void UTorcherLayerTanH::CloneData(TScriptInterface<ITorcherTensorBase>& OutClone
 
 void UTorcherLayerTanH::SetLayerDeviceType(ETorcherTensorDeviceType DeviceType)
 {
-	LayerDeviceType = DeviceType;
+	TanHLayerOptions.LayerDeviceType = DeviceType;
 }
 

@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Layers/ITorcherLayer.h"
 #include "UObject/Object.h"
+#include "Layers/ITorcherLayer.h"
+#include "Layers/Activation/TorcherLayerTanHOptions.h"
 #include "TorcherLayerTanH.generated.h"
 
 /**
@@ -20,7 +21,7 @@ public:
 	 * The Layer Device Type
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BatchNorm1D Layer|Params")
-	ETorcherTensorDeviceType LayerDeviceType;
+	FTorcherLayerTanHOptions TanHLayerOptions;
 
 	UTorcherLayerTanH(const FObjectInitializer& ObjectInitializer);
 
