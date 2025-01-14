@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
 #include "Layers/ITorcherLayer.h"
+#include "TorcherLayerLinearOptions.h"
 #include "TorcherLayerLinear.generated.h"
 
 /**
- * 
+ * Description of the Linear Layer in PyTorch.
  */
 UCLASS(Blueprintable, BlueprintType, DisplayName = "Torcher Linear Layer")
 class TORCHER_API UTorcherLayerLinear : public UObject, public IITorcherLayer
@@ -24,42 +25,23 @@ public:
 	UTorcherLayerLinear(const FObjectInitializer& ObjectInitializer);
 
 	/*
-	 * The Layer Device Type
+	 * The Linear Layer Options
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Linear Layer|Params")
-	ETorcherTensorDeviceType LayerDeviceType;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Linear Layer")
+	FTorcherLayerLinearOptions TorcherLinearLayerOptions;
+	
 	/*
 	 * The Weights Tensor
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Linear Layer|Params")
 	TScriptInterface<ITorcherTensorBase> Weights;
-
-	/*
-	 * Dimensions of the Weights Tensor
-	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Linear Layer|Params")
-	TArray<int64> WeightsDims;
-
+	
 	/*
 	 * The Bias Tensor
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Linear Layer|Params")
 	TScriptInterface<ITorcherTensorBase> Bias;
-
-	/*
-	 * Dimensions of the Bias Tensor. This should *ideally* be equal to the last dimension
-	 * of the Weights Tensor.
-	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Linear Layer|Params")
-	TArray<int64> BiasDims;
-
-	/*
-	 * Should we use Bias?
-	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Linear Layer|Params")
-	bool bUseBias;
-
+	
 	/*
 	 * Initialize the Parameters of this Layer. In this case, they are the Weights and Bias Tensors.
 	 * Weights are a torch::randn, bias is a torch::zeros

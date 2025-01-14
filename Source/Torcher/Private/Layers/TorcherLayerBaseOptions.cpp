@@ -2,18 +2,15 @@
 
 
 #include "Layers/TorcherLayerBaseOptions.h"
-#include "Macros/TorcherPreProcMacros.h"
 
-TORCH_INCLUDES_START
-#include "torch/nn/module.h"
-TORCH_INCLUDES_END
 
-FTorcherLayerBaseOptions::FTorcherLayerBaseOptions() noexcept
+FTorcherLayerBaseOptions::FTorcherLayerBaseOptions()
 	: LayerName(TEXT("UNNAMED_LAYER"))
+	, LayerDeviceType(ETorcherTensorDeviceType::Cpu)
 {
 }
 
-void FTorcherLayerBaseOptions::SetLayerName(const torch::nn::Module& Module) noexcept
+void FTorcherLayerBaseOptions::SetLayerName(const FString& NewLayerName)
 {
-	LayerName = Module.name().c_str();
+	LayerName = NewLayerName;
 }

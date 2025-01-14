@@ -9,25 +9,43 @@
 
 UTorcherLayerBatchNorm1D::UTorcherLayerBatchNorm1D(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, LayerDeviceType(ETorcherTensorDeviceType::Cpu)
-	, Dimensions(4)
-	, Eps(0.00001)
-	, Momentum(0.1)
-	, bIsTraining(true)
-{}
+{
+	TorcherLayerBatchNorm1DOptions.LayerDeviceType = ETorcherTensorDeviceType::Cpu;
+	TorcherLayerBatchNorm1DOptions.Dimensions = 4;
+	TorcherLayerBatchNorm1DOptions.Eps = 0.00001;
+	TorcherLayerBatchNorm1DOptions.Momentum = 0.1;
+	TorcherLayerBatchNorm1DOptions.bIsTraining = true;
+	TorcherLayerBatchNorm1DOptions.SetLayerName(TEXT("BATCHNORM1D LAYER"));
+}
 
 void UTorcherLayerBatchNorm1D::InitializeLayerParams()
 {
-	Gamma = UTorcherTensorUtilities::CreateOnesTensor(UTorcherTensorFloat::StaticClass(), TArray<int64>{Dimensions}, LayerDeviceType);
+	Gamma = UTorcherTensorUtilities::CreateOnesTensor(
+		UTorcherTensorFloat::StaticClass(),
+		TArray<int64>{TorcherLayerBatchNorm1DOptions.Dimensions},
+		TorcherLayerBatchNorm1DOptions.LayerDeviceType
+	);
 	Gamma->SetTensorLabel(TEXT("Gamma"));
 
-	Beta = UTorcherTensorUtilities::CreateZeroTensor(UTorcherTensorFloat::StaticClass(), TArray<int64>{Dimensions}, LayerDeviceType);
+	Beta = UTorcherTensorUtilities::CreateZeroTensor(
+		UTorcherTensorFloat::StaticClass(),
+		TArray<int64>{TorcherLayerBatchNorm1DOptions.Dimensions},
+		TorcherLayerBatchNorm1DOptions.LayerDeviceType
+	);
 	Beta->SetTensorLabel(TEXT("Beta"));
 
-	RunningMean = UTorcherTensorUtilities::CreateZeroTensor(UTorcherTensorFloat::StaticClass(), TArray<int64>{Dimensions}, LayerDeviceType);
+	RunningMean = UTorcherTensorUtilities::CreateZeroTensor(
+		UTorcherTensorFloat::StaticClass(),
+		TArray<int64>{TorcherLayerBatchNorm1DOptions.Dimensions},
+		TorcherLayerBatchNorm1DOptions.LayerDeviceType
+	);
 	RunningMean->SetTensorLabel(TEXT("RunningMean"));
 
-	RunningVariance = UTorcherTensorUtilities::CreateOnesTensor(UTorcherTensorFloat::StaticClass(), TArray<int64>{Dimensions}, LayerDeviceType);
+	RunningVariance = UTorcherTensorUtilities::CreateOnesTensor(
+		UTorcherTensorFloat::StaticClass(),
+		TArray<int64>{TorcherLayerBatchNorm1DOptions.Dimensions},
+		TorcherLayerBatchNorm1DOptions.LayerDeviceType
+	);
 	RunningVariance->SetTensorLabel(TEXT("RunningVariance"));
 }
 
@@ -45,27 +63,27 @@ bool UTorcherLayerBatchNorm1D::Forward(const TScriptInterface<ITorcherTensorBase
 	at::Tensor* InputTensor = Input->GetData();
 	at::Tensor* XMean = RunningMean->GetData();
 	at::Tensor* XVar = RunningVariance->GetData();
-	if (bIsTraining)
+	if (TorcherLayerBatchNorm1DOptions.bIsTraining)
 	{
 		*XMean = InputTensor->mean(0, true);
 		*XVar = InputTensor->var(0, true, true);
 	}
 
-	at::Tensor XHat = (*InputTensor - *XMean) / torch::sqrt(*XVar + Eps);
+	at::Tensor XHat = (*InputTensor - *XMean) / torch::sqrt(*XVar + TorcherLayerBatchNorm1DOptions.Eps);
 	at::Tensor OutTensor = *Gamma->GetData() * XHat * *Beta->GetData();
 
 	// Update the buffers
-	if (bIsTraining)
+	if (TorcherLayerBatchNorm1DOptions.bIsTraining)
 	{
 		torch::NoGradGuard NoGrad;
-		RunningMean->SetData((1 - Momentum) * (*RunningMean->GetData() + Momentum + *XMean));
-		RunningVariance->SetData((1 - Momentum) * (*RunningVariance->GetData() + Momentum + *XVar));
+		RunningMean->SetData((1 - TorcherLayerBatchNorm1DOptions.Momentum) * (*RunningMean->GetData() + TorcherLayerBatchNorm1DOptions.Momentum + *XMean));
+		RunningVariance->SetData((1 - TorcherLayerBatchNorm1DOptions.Momentum) * (*RunningVariance->GetData() + TorcherLayerBatchNorm1DOptions.Momentum + *XVar));
 	}
 
 	auto* const TensorObject = NewObject<UObject>(GetTransientPackage(), UTorcherTensorFloat::StaticClass());
 	auto* const Tensor = CastChecked<ITorcherTensorBase>(TensorObject);
 
-	Tensor->SetTensorDevice(LayerDeviceType);
+	Tensor->SetTensorDevice(TorcherLayerBatchNorm1DOptions.LayerDeviceType);
 	Tensor->SetData(OutTensor);
 
 	Output = TensorObject;
@@ -92,7 +110,7 @@ void UTorcherLayerBatchNorm1D::CloneData(TScriptInterface<ITorcherTensorBase>& O
 
 void UTorcherLayerBatchNorm1D::SetLayerDeviceType(ETorcherTensorDeviceType DeviceType)
 {
-	LayerDeviceType = DeviceType;
+	TorcherLayerBatchNorm1DOptions.LayerDeviceType = DeviceType;
 	Gamma->SetTensorDevice(DeviceType);
 	Beta->SetTensorDevice(DeviceType);
 	

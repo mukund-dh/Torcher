@@ -8,20 +8,29 @@
 
 UTorcherLayerLinear::UTorcherLayerLinear(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, LayerDeviceType(ETorcherTensorDeviceType::Cpu)
-	, WeightsDims(TArray<int64>{4, 4})
-	, bUseBias(true)
 {
+	TorcherLinearLayerOptions.bUseBias = true;
+	TorcherLinearLayerOptions.LayerDeviceType = ETorcherTensorDeviceType::Cpu;
+	TorcherLinearLayerOptions.WeightsDimensions = TArray<int64>({4, 4});
 	// Set the bias to the last dimension in the weights
-	BiasDims = {WeightsDims.Last()};
+	TorcherLinearLayerOptions.BiasDimensions = {TorcherLinearLayerOptions.WeightsDimensions.Last()};
+	TorcherLinearLayerOptions.SetLayerName(TEXT("LINEAR LAYER"));
 }
 
 void UTorcherLayerLinear::InitializeLayerParams()
 {
-	Weights = UTorcherTensorUtilities::CreateRandnTensor(UTorcherTensorFloat::StaticClass(), WeightsDims, LayerDeviceType);
+	Weights = UTorcherTensorUtilities::CreateRandnTensor(
+		UTorcherTensorFloat::StaticClass(),
+		TorcherLinearLayerOptions.WeightsDimensions,
+		TorcherLinearLayerOptions.LayerDeviceType
+	);
 	Weights->SetTensorLabel(TEXT("Weights"));
 
-	Bias = UTorcherTensorUtilities::CreateZeroTensor(UTorcherTensorFloat::StaticClass(), BiasDims, LayerDeviceType);
+	Bias = UTorcherTensorUtilities::CreateZeroTensor(
+		UTorcherTensorFloat::StaticClass(),
+		TorcherLinearLayerOptions.BiasDimensions,
+		TorcherLinearLayerOptions.LayerDeviceType
+	);
 	Bias->SetTensorLabel(TEXT("Bias"));
 }
 
@@ -44,7 +53,7 @@ bool UTorcherLayerLinear::Forward(const TScriptInterface<ITorcherTensorBase>& In
 	}
 	
 	at::Tensor OutTensor = torch::matmul(*Input->GetData(), *Weights->GetData());
-	if (bUseBias)
+	if (TorcherLinearLayerOptions.bUseBias)
 	{
 		OutTensor = OutTensor.add(*Bias->GetData());
 	}
@@ -52,7 +61,7 @@ bool UTorcherLayerLinear::Forward(const TScriptInterface<ITorcherTensorBase>& In
 	auto* const TensorObject = NewObject<UObject>(GetTransientPackage(), UTorcherTensorFloat::StaticClass());
 	auto* const Tensor = CastChecked<ITorcherTensorBase>(TensorObject);
 
-	Tensor->SetTensorDevice(LayerDeviceType);
+	Tensor->SetTensorDevice(TorcherLinearLayerOptions.LayerDeviceType);
 	Tensor->SetData(OutTensor);
 
 	Output = TensorObject;
@@ -79,7 +88,7 @@ void UTorcherLayerLinear::CloneData(TScriptInterface<ITorcherTensorBase>& OutClo
 
 void UTorcherLayerLinear::SetLayerDeviceType(ETorcherTensorDeviceType DeviceType)
 {
-	LayerDeviceType = DeviceType;
+	TorcherLinearLayerOptions.LayerDeviceType = DeviceType;
 	Weights->SetTensorDevice(DeviceType);
 	Bias->SetTensorDevice(DeviceType);
 }

@@ -3,13 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
+#include "Tensors/TorcherDeviceType.h"
 #include "TorcherLayerBaseOptions.generated.h"
 
-namespace torch::nn
-{
-	class Module;
-}
 
 /**
  * 
@@ -22,17 +18,23 @@ struct TORCHER_API FTorcherLayerBaseOptions
 	/*
 	 * Name of this layer
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true), Category = "Layer Params")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true), Category = "Layer|Base Params")
 	FString LayerName;
+
+	/*
+	 * Device type of this layer
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = true), Category = "Layer|Base Params")
+	ETorcherTensorDeviceType LayerDeviceType;
 
 	/*
 	 * Constructor
 	 */
 	UE_NODISCARD_CTOR
-	FTorcherLayerBaseOptions() noexcept;
+	FTorcherLayerBaseOptions();
 
 	/*
 	 * Sets the layer's name from a module
 	 */
-	void SetLayerName(const torch::nn::Module& Module) noexcept;
+	void SetLayerName(const FString& NewLayerName);
 };

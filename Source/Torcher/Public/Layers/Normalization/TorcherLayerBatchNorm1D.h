@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
 #include "Layers/ITorcherLayer.h"
+#include "TorcherLayerBatchNorm1DOptions.h"
 #include "TorcherLayerBatchNorm1D.generated.h"
 
 /**
@@ -21,12 +22,6 @@ public:
 	 */
 	UE_NODISCARD_CTOR
 	UTorcherLayerBatchNorm1D(const FObjectInitializer& ObjectInitializer);
-
-	/*
-	 * The Layer Device Type
-	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BatchNorm1D Layer|Params")
-	ETorcherTensorDeviceType LayerDeviceType;
 
 	/*
 	 * The Gamma Tensor. Parameters of the layer.
@@ -53,32 +48,11 @@ public:
 	TScriptInterface<ITorcherTensorBase> RunningVariance;
 
 	/*
-	 * Dimensions of the Weights Tensor.
+	 * The BatchNorm1D Options
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BatchNorm1D Layer|Params")
-	int64 Dimensions;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Layers|BatchNorm1D Params")
+	FTorcherLayerBatchNorm1DOptions TorcherLayerBatchNorm1DOptions;
 	
-	/*
-	 * Epsilon value. Constant for a layer.
-	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BatchNorm1D Layer|Params")
-	float Eps;
-
-	/*
-	 * Momentum of the normalization.
-	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BatchNorm1D Layer|Params")
-	float Momentum;
-
-protected:
-	/*
-	 * Is this training?
-	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BatchNorm1D Layer|Params")
-	bool bIsTraining;
-
-public:
-
 	/*
 	 * Initialize the Parameters of this Layer. In this case, they are the Weights and Bias Tensors.
 	 * Weights are a torch::randn, bias is a torch::zeros
