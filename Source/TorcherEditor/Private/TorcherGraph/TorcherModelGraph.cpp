@@ -49,11 +49,45 @@ void TorcherModelGraph::InitEditor(const EToolkitMode::Type Mode, const TSharedP
 	);
 }
 
+void TorcherModelGraph::SetSelectedNodeDetailView(TSharedPtr<class IDetailsView> DetailsView)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Attempting to set the DetailsView"));
+	_selectedNodeDetailsView = DetailsView;
+	_selectedNodeDetailsView->OnFinishedChangingProperties().AddRaw(this, &TorcherModelGraph::OnNodeDetailsViewPropertyUpdated);
+}
+
+void TorcherModelGraph::OnGraphSelectionChanged(const FGraphPanelSelectionSet& Selection)
+{
+	// Find the first Layer Node if any
+	for (UObject* obj : Selection)
+	{
+		UTorcherGraphNode* node = Cast<UTorcherGraphNode>(obj);
+		if (node)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Accessing Node: %s"), *node->GetName());
+			_selectedNodeDetailsView->SetObject(node);
+			return;
+		}
+	}
+
+	_selectedNodeDetailsView->SetObject(nullptr);
+}
+
 void TorcherModelGraph::OnClose()
 {
 	UpdateWorkingAssetFromGraph();
 	_workingGraph->RemoveOnGraphChangedHandler(_graphChangeDelegateHandle);
 	FAssetEditorToolkit::OnClose();
+}
+
+void TorcherModelGraph::OnNodeDetailsViewPropertyUpdated(const FPropertyChangedEvent& Event)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Attempting to find the Working Graph UI"));
+	if (_workingGraphUi != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Found the Working Graph UI"));
+		_workingGraphUi->NotifyGraphChanged();
+	}
 }
 
 void TorcherModelGraph::OnGraphChanged(const FEdGraphEditAction& EditAction)
@@ -74,8 +108,12 @@ void TorcherModelGraph::UpdateWorkingAssetFromGraph()
 
 	for (UEdGraphNode* UiNode : _workingGraph->Nodes)
 	{
+		UTorcherGraphNode* UiGraphNode = Cast<UTorcherGraphNode>(UiNode);
+		if (UiGraphNode == nullptr) continue;
+		
 		UTorcherRuntimeNode* RuntimeNode = NewObject<UTorcherRuntimeNode>(RuntimeGraph);
 		RuntimeNode->Location = FVector2D(UiNode->NodePosX, UiNode->NodePosY);
+		RuntimeNode->LayerOptions = UiGraphNode->GetLayerNodeOptions();
 
 		for (UEdGraphPin* Pin : UiNode->Pins)
 		{
@@ -126,6 +164,9 @@ void TorcherModelGraph::UpdateGraphFromWorkingAsset()
 
 		NewNode->NodePosX = RuntimeNode->Location.X;
 		NewNode->NodePosY = RuntimeNode->Location.Y;
+
+		// Set the layer options here.
+		NewNode->SetLayerNodeOptions(RuntimeNode->LayerOptions);
 
 		if (RuntimeNode->InputPin != nullptr)
 		{

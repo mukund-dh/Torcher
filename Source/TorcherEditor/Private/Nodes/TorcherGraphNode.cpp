@@ -5,6 +5,11 @@
 #include "Framework/Commands/UIAction.h"
 #include "ToolMenu.h"
 
+FText UTorcherGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
+{
+	return FText::FromString(GetLayerNodeOptions().LayerName);
+}
+
 void UTorcherGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
 {
 	FToolMenuSection& Section = Menu->AddSection(TEXT("TorcherLayer"), FText::FromString(TEXT("Create Torcher Layers")));

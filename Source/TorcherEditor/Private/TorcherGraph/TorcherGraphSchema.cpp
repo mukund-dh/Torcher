@@ -3,6 +3,7 @@
 
 #include "TorcherGraph/TorcherGraphSchema.h"
 #include "Nodes/TorcherGraphNode.h"
+#include "Layers/TorcherLayerBaseOptions.h"
 
 void UTorcherGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
@@ -37,6 +38,11 @@ UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* 
 	
 	result->NodePosX = Location.X;
 	result->NodePosY = Location.Y;
+	
+	FTorcherLayerBaseOptions LayerOptions;
+	LayerOptions.LayerName = "TEST LAYER";
+	LayerOptions.LayerDeviceType = ETorcherTensorDeviceType::Cuda;
+	result->SetLayerNodeOptions(LayerOptions);
 
 	UEdGraphPin* InputPin = result->CreateCustomPin(EEdGraphPinDirection::EGPD_Input, TEXT("SomeInput"));
 	result->CreateCustomPin(EEdGraphPinDirection::EGPD_Output, TEXT("Output1"));

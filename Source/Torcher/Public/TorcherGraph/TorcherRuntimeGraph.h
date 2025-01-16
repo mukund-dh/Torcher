@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NameTypes.h"
+#include "Layers/TorcherLayerBaseOptions.h"
 #include "TorcherRuntimeGraph.generated.h"
 
 /**
@@ -41,6 +42,9 @@ public:
 
 	UPROPERTY()
 	FVector2D Location;
+
+	UPROPERTY()
+	FTorcherLayerBaseOptions LayerOptions;
 };
 
 /**

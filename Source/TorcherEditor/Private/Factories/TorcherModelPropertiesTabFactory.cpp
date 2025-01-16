@@ -35,12 +35,23 @@ TSharedRef<SWidget> TorcherModelPropertiesTabFactory::CreateTabBody(const FWorkf
 
 	TSharedPtr<IDetailsView> detailsView = propertyEditorModule.CreateDetailView(detailsViewArgs);
 	detailsView->SetObject(app->GetWorkingAsset());
+
+	TSharedPtr<IDetailsView> selectedNodeDetailsView = propertyEditorModule.CreateDetailView(detailsViewArgs);
+	selectedNodeDetailsView->SetObject(nullptr);
+	app->SetSelectedNodeDetailView(selectedNodeDetailsView);
+	
 	return SNew(SVerticalBox)
 				+ SVerticalBox::Slot()
 				.FillHeight(1.0f)
 				.HAlign(HAlign_Fill)
 				[
 					detailsView.ToSharedRef()
+				]
+				+ SVerticalBox::Slot()
+				.FillHeight(1.0f)
+				.HAlign(HAlign_Fill)
+				[
+					selectedNodeDetailsView.ToSharedRef()
 				];
 }
 

@@ -20,14 +20,22 @@ TorcherModelPrimaryTabFactory::TorcherModelPrimaryTabFactory(TSharedPtr<TorcherM
 TSharedRef<SWidget> TorcherModelPrimaryTabFactory::CreateTabBody(const FWorkflowTabSpawnInfo& Info) const
 {
 	TSharedPtr<TorcherModelGraph> app = _app.Pin();
+
+	SGraphEditor::FGraphEditorEvents graphEvents;
+	graphEvents.OnSelectionChanged.BindRaw(app.Get(), &TorcherModelGraph::OnGraphSelectionChanged);
+	
+	TSharedPtr<SGraphEditor> GraphEd = SNew(SGraphEditor)
+					.IsEditable(true)
+					.GraphEvents(graphEvents)
+					.GraphToEdit(app->GetWorkingGraph());
+	app->SetWorkingGraphUi(GraphEd);
+	
 	return SNew(SVerticalBox)
 				+ SVerticalBox::Slot()
 				.FillHeight(1.0f)
 				.HAlign(HAlign_Fill)
 				[
-					SNew(SGraphEditor)
-					.IsEditable(true)
-					.GraphToEdit(app->GetWorkingGraph())
+					GraphEd.ToSharedRef()
 				];
 }
 
