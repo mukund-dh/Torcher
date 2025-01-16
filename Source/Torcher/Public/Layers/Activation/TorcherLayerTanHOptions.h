@@ -13,5 +13,7 @@ USTRUCT(BlueprintType, DisplayName = "Torcher TanH Layer Options")
 struct TORCHER_API FTorcherLayerTanHOptions : public  FTorcherLayerBaseOptions
 {
 	GENERATED_BODY()
-	
+
+	UE_NODISCARD_CTOR
+	FTorcherLayerTanHOptions();
 };

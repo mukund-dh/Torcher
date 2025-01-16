@@ -9,12 +9,6 @@
 UTorcherLayerLinear::UTorcherLayerLinear(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	TorcherLinearLayerOptions.bUseBias = true;
-	TorcherLinearLayerOptions.LayerDeviceType = ETorcherTensorDeviceType::Cpu;
-	TorcherLinearLayerOptions.WeightsDimensions = TArray<int64>({4, 4});
-	// Set the bias to the last dimension in the weights
-	TorcherLinearLayerOptions.BiasDimensions = {TorcherLinearLayerOptions.WeightsDimensions.Last()};
-	TorcherLinearLayerOptions.SetLayerName(TEXT("LINEAR LAYER"));
 }
 
 void UTorcherLayerLinear::InitializeLayerParams()

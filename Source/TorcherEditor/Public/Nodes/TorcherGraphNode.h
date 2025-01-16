@@ -16,20 +16,21 @@ class TORCHEREDITOR_API UTorcherGraphNode : public UEdGraphNode
 	GENERATED_BODY()
 
 public:
+	// UEdGraphNode
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override { return FColor::Emerald; }
 	virtual bool CanUserDeleteNode() const override { return true; }
 	virtual void GetNodeContextMenuActions(class UToolMenu* Menu, class UGraphNodeContextMenuContext* Context) const override;
 
+public:
+	// Our Functions
 	UEdGraphPin* CreateCustomPin(EEdGraphPinDirection Direction, FName name);
 	
 	void SetLayerNodeOptions(const FTorcherLayerBaseOptions& Options) { LayerNodeOptions = Options; }
+
 	FTorcherLayerBaseOptions GetLayerNodeOptions() const { return LayerNodeOptions; }
 
 protected:
-
-	UPROPERTY(EditAnywhere)
-	FString SomeString;
 	
 	UPROPERTY(EditAnywhere)
 	FTorcherLayerBaseOptions LayerNodeOptions = FTorcherLayerBaseOptions();

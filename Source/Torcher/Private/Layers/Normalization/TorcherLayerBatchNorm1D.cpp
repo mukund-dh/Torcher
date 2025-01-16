@@ -10,12 +10,6 @@
 UTorcherLayerBatchNorm1D::UTorcherLayerBatchNorm1D(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	TorcherLayerBatchNorm1DOptions.LayerDeviceType = ETorcherTensorDeviceType::Cpu;
-	TorcherLayerBatchNorm1DOptions.Dimensions = 4;
-	TorcherLayerBatchNorm1DOptions.Eps = 0.00001;
-	TorcherLayerBatchNorm1DOptions.Momentum = 0.1;
-	TorcherLayerBatchNorm1DOptions.bIsTraining = true;
-	TorcherLayerBatchNorm1DOptions.SetLayerName(TEXT("BATCHNORM1D LAYER"));
 }
 
 void UTorcherLayerBatchNorm1D::InitializeLayerParams()

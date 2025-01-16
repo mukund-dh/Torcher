@@ -8,8 +8,6 @@
 UTorcherLayerTanH::UTorcherLayerTanH(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	TanHLayerOptions.LayerDeviceType = ETorcherTensorDeviceType::Cpu;
-	TanHLayerOptions.SetLayerName(TEXT("TANH LAYER"));
 }
 
 void UTorcherLayerTanH::InitializeLayerParams()

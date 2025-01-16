@@ -3,3 +3,8 @@
 
 #include "Layers/Activation/TorcherLayerTanHOptions.h"
 
+FTorcherLayerTanHOptions::FTorcherLayerTanHOptions()
+{
+	LayerName = TEXT("TanH Layer");
+	LayerDeviceType = ETorcherTensorDeviceType::Cpu;
+}

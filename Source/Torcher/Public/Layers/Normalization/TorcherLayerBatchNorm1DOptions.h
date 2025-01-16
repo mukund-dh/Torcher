@@ -38,4 +38,6 @@ struct TORCHER_API FTorcherLayerBatchNorm1DOptions : public FTorcherLayerBaseOpt
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BatchNorm1D Layer|Params")
 	bool bIsTraining;
 
+	UE_NODISCARD_CTOR
+	FTorcherLayerBatchNorm1DOptions();
 };

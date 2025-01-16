@@ -33,4 +33,7 @@ struct TORCHER_API FTorcherLayerLinearOptions : public FTorcherLayerBaseOptions
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Layer|Linear Layer")
 	bool bUseBias;
+
+	UE_NODISCARD_CTOR
+	FTorcherLayerLinearOptions();
 };
