@@ -34,8 +34,6 @@ private:
 	// Working graph model
 	class UEdGraph* _workingGraph = nullptr;
 
-	FDelegateHandle _graphChangeDelegateHandle;
-
 	// The slate widget of the graph editor
 	TSharedPtr<SGraphEditor> _workingGraphUi = nullptr;
 
@@ -53,10 +51,11 @@ public: // FAssetEditorToolkit interface
 
 	virtual void OnClose() override;
 	void OnNodeDetailsViewPropertyUpdated(const FPropertyChangedEvent& Event);
-	void OnGraphChanged(const FEdGraphEditAction& EditAction);
+	void OnWorkingAssetPreSave();
 
 protected:
 
 	void UpdateWorkingAssetFromGraph();
 	void UpdateGraphFromWorkingAsset();
+	class UTorcherGraphNode* GetSelectedNode(const FGraphPanelSelectionSet& Selection);
 };

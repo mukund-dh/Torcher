@@ -7,6 +7,27 @@
 #include "Layers/TorcherLayerBaseOptions.h"
 #include "TorcherRuntimeGraph.generated.h"
 
+UENUM()
+enum class ETorcherNodeType
+{
+	// The Start Node
+	Input,
+
+	Default, // The default node type which gets created when the graph is initialized
+
+	// Linear Layer
+	Linear,
+
+	// Normalization Layers
+	BatchNorm1D,
+
+	// Activation Layers
+	TanH,
+
+	// The End Node
+	Output
+};
+
 /**
  * Holds data for runtime pin generation
  */
@@ -34,6 +55,9 @@ class TORCHER_API UTorcherRuntimeNode : public UObject
     GENERATED_BODY()
 
 public:
+	UPROPERTY()
+	ETorcherNodeType NodeType = ETorcherNodeType::Default;
+	
 	UPROPERTY()
 	UTorcherRuntimePin* InputPin;
 

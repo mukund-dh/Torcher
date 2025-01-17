@@ -17,47 +17,6 @@ void UTorcherGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeCon
 	// HACK! - Initialize actions in memeber variables and then initialize them using and Init function
 	UTorcherGraphNode* node = (UTorcherGraphNode*) this;
 	Section.AddMenuEntry(
-		TEXT("AddPinEntry"),
-		FText::FromString(TEXT("Add Pin")),
-		FText::FromString(TEXT("Creates a new pin")),
-		FSlateIcon(TEXT("TorcherEditorStyle"), TEXT("TorcherGraph.AddNodePinIcon")),
-		FUIAction(FExecuteAction::CreateLambda(
-			[node] ()
-			{
-				node->CreatePin(
-					EEdGraphPinDirection::EGPD_Output,
-					TEXT("Outputs"),
-					TEXT("Another Output")
-				);
-
-				node->GetGraph()->NotifyGraphChanged();
-				node->GetGraph()->Modify();
-			}
-		))
-	);
-
-	Section.AddMenuEntry(
-		TEXT("DeletePinEntry"),
-		FText::FromString(TEXT("Delete Pin")),
-		FText::FromString(TEXT("Deletes the last pin")),
-		FSlateIcon(TEXT("TorcherEditorStyle"), TEXT("TorcherGraph.DeleteNodePinIcon")),
-		FUIAction(FExecuteAction::CreateLambda(
-			[node] ()
-			{
-				UEdGraphPin* pin = node->GetPinAt(node->Pins.Num() - 1);
-				if (pin->Direction != EGPD_Input)
-				{
-					node->RemovePin(pin);
-
-					node->GetGraph()->NotifyGraphChanged();
-					node->GetGraph()->Modify();
-					
-				}
-			}
-		))
-	);
-
-	Section.AddMenuEntry(
 		TEXT("DeleteEntry"),
 		FText::FromString(TEXT("Delete Node")),
 		FText::FromString(TEXT("Deletes the node")),
@@ -76,7 +35,7 @@ UEdGraphPin* UTorcherGraphNode::CreateCustomPin(EEdGraphPinDirection Direction, 
 	FName Category = (Direction == EEdGraphPinDirection::EGPD_Input) ? TEXT("Inputs") : TEXT("Outputs");
 	FName SubCategory = TEXT("TorcherPin");
 
-	UEdGraphPin* Pin = CreatePin(Direction, Category, name);
+	UEdGraphPin* Pin = CreatePin(Direction, Category, SubCategory, name);
 	Pin->PinType.PinSubCategory = SubCategory;
 	return Pin;
 }

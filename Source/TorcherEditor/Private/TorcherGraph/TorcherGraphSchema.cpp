@@ -38,15 +38,9 @@ UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* 
 	
 	result->NodePosX = Location.X;
 	result->NodePosY = Location.Y;
-	
-	FTorcherLayerBaseOptions LayerOptions;
-	LayerOptions.LayerName = "TEST LAYER";
-	LayerOptions.LayerDeviceType = ETorcherTensorDeviceType::Cuda;
-	result->SetLayerNodeOptions(LayerOptions);
 
-	UEdGraphPin* InputPin = result->CreateCustomPin(EEdGraphPinDirection::EGPD_Input, TEXT("SomeInput"));
-	result->CreateCustomPin(EEdGraphPinDirection::EGPD_Output, TEXT("Output1"));
-	result->CreateCustomPin(EEdGraphPinDirection::EGPD_Output, TEXT("Output2"));
+	UEdGraphPin* InputPin = result->CreateCustomPin(EEdGraphPinDirection::EGPD_Input, TEXT("In Tensor"));
+	result->CreateCustomPin(EEdGraphPinDirection::EGPD_Output, TEXT("Out Tensor"));
 
 	if (FromPin != nullptr)
 	{

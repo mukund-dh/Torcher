@@ -21,6 +21,12 @@ void TorcherModelGraph::InitEditor(const EToolkitMode::Type Mode, const TSharedP
 	ObjectsToEdit.Add(InObject);
 
 	_workingAsset = Cast<UTorcherModelBase>(InObject);
+	_workingAsset->SetPreSaveListener(
+		[this] ()
+		{
+			OnWorkingAssetPreSave();
+		}
+	);
 
 	_workingGraph = FBlueprintEditorUtils::CreateNewGraph(
 		_workingAsset,
@@ -43,55 +49,57 @@ void TorcherModelGraph::InitEditor(const EToolkitMode::Type Mode, const TSharedP
 	SetCurrentMode(TEXT("TorcherModelGraphAppMode"));
 
 	UpdateGraphFromWorkingAsset();
+}
 
-	_graphChangeDelegateHandle = _workingGraph->AddOnGraphChangedHandler(
-		FOnGraphChanged::FDelegate::CreateSP(this, &TorcherModelGraph::OnGraphChanged)
-	);
+
+UTorcherGraphNode* TorcherModelGraph::GetSelectedNode(const FGraphPanelSelectionSet& Selection)
+{
+	for (UObject* obj : Selection)
+	{
+		UTorcherGraphNode* node = Cast<UTorcherGraphNode>(obj);
+		if (node)
+		{
+			return node;
+		}
+	}
+	return nullptr;
 }
 
 void TorcherModelGraph::SetSelectedNodeDetailView(TSharedPtr<class IDetailsView> DetailsView)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attempting to set the DetailsView"));
 	_selectedNodeDetailsView = DetailsView;
 	_selectedNodeDetailsView->OnFinishedChangingProperties().AddRaw(this, &TorcherModelGraph::OnNodeDetailsViewPropertyUpdated);
 }
 
 void TorcherModelGraph::OnGraphSelectionChanged(const FGraphPanelSelectionSet& Selection)
 {
-	// Find the first Layer Node if any
-	for (UObject* obj : Selection)
-	{
-		UTorcherGraphNode* node = Cast<UTorcherGraphNode>(obj);
-		if (node)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Accessing Node: %s"), *node->GetName());
-			_selectedNodeDetailsView->SetObject(node);
-			return;
-		}
-	}
-
-	_selectedNodeDetailsView->SetObject(nullptr);
+	UTorcherGraphNode* SelectedNode = GetSelectedNode(Selection);
+	_selectedNodeDetailsView->SetObject(SelectedNode);
 }
 
 void TorcherModelGraph::OnClose()
 {
 	UpdateWorkingAssetFromGraph();
-	_workingGraph->RemoveOnGraphChangedHandler(_graphChangeDelegateHandle);
+	_workingAsset->SetPreSaveListener(nullptr);
 	FAssetEditorToolkit::OnClose();
 }
 
 void TorcherModelGraph::OnNodeDetailsViewPropertyUpdated(const FPropertyChangedEvent& Event)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attempting to find the Working Graph UI"));
 	if (_workingGraphUi != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Found the Working Graph UI"));
+		UTorcherGraphNode* TorcherNode = GetSelectedNode(_workingGraphUi->GetSelectedNodes());
+		if (TorcherNode)
+		{
+			// Can do some stuff here.
+		}
 		_workingGraphUi->NotifyGraphChanged();
 	}
 }
 
-void TorcherModelGraph::OnGraphChanged(const FEdGraphEditAction& EditAction)
+void TorcherModelGraph::OnWorkingAssetPreSave()
 {
+	// Update our asset from the graph just before saving it
 	UpdateWorkingAssetFromGraph();
 }
 

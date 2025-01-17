@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "TorcherGraph/TorcherRuntimeGraph.h"
+
+#include <functional>
+
 #include "TorcherModelBase.generated.h"
 
 /**
@@ -20,4 +23,17 @@ public:
 
 	UPROPERTY()
 	UTorcherRuntimeGraph* ModelGraph = nullptr;
+
+public:
+	// Our Interface
+	void SetPreSaveListener(std::function<void()> OnPreSaveListener) { _onPreSaveListener = OnPreSaveListener; }
+
+public:
+	// UObject Interface
+	virtual void PreSave(FObjectPreSaveContext SaveContext) override;
+	
+private:
+	// Members
+	std::function<void()> _onPreSaveListener = nullptr;
+	
 };
