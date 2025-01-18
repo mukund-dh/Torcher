@@ -5,9 +5,15 @@
 #include "Framework/Commands/UIAction.h"
 #include "ToolMenu.h"
 
+UTorcherGraphNode::UTorcherGraphNode()
+{
+	LayerName = TEXT("UNNAMED LAYER");
+	LayerDeviceType = ETorcherTensorDeviceType::Cpu;
+}
+
 FText UTorcherGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return FText::FromString(GetLayerNodeOptions().LayerName);
+	return FText::FromString(LayerName);
 }
 
 void UTorcherGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeContextMenuContext* Context) const
@@ -30,12 +36,33 @@ void UTorcherGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeCon
 	);
 }
 
-UEdGraphPin* UTorcherGraphNode::CreateCustomPin(EEdGraphPinDirection Direction, FName name)
+UEdGraphPin* UTorcherGraphNode::CreateCustomPin(EEdGraphPinDirection Direction, FName Name)
 {
 	FName Category = (Direction == EEdGraphPinDirection::EGPD_Input) ? TEXT("Inputs") : TEXT("Outputs");
 	FName SubCategory = TEXT("TorcherPin");
 
-	UEdGraphPin* Pin = CreatePin(Direction, Category, SubCategory, name);
+	UEdGraphPin* Pin = CreatePin(Direction, Category, SubCategory, Name);
 	Pin->PinType.PinSubCategory = SubCategory;
 	return Pin;
+}
+
+void UTorcherGraphNode::SetLayerNodeOptions()
+{
+	Options.LayerName = LayerName;
+	Options.LayerDeviceType = LayerDeviceType;
+}
+
+void UTorcherGraphNode::SetLayerNodeOptions(const FTorcherLayerBaseOptions& InOptions)
+{
+	LayerName = InOptions.LayerName;
+	LayerDeviceType = InOptions.LayerDeviceType;
+
+	// Setting it two times; working for now but need to figure out a better way to do this.
+	Options.LayerName = InOptions.LayerName;
+	Options.LayerDeviceType = InOptions.LayerDeviceType;
+}
+
+FTorcherLayerBaseOptions& UTorcherGraphNode::GetLayerNodeOptions()
+{
+	return Options;
 }

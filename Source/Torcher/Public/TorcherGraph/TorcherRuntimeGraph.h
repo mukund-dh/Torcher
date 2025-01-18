@@ -68,7 +68,14 @@ public:
 	FVector2D Location;
 
 	UPROPERTY()
-	FTorcherLayerBaseOptions LayerOptions;
+	FString LayerName;
+
+	UPROPERTY()
+	ETorcherTensorDeviceType LayerDeviceType;
+
+	virtual void SetLayerOptions(const FTorcherLayerBaseOptions& Options);
+	
+	virtual void GetLayerOptions(FTorcherLayerBaseOptions& Options);
 };
 
 /**

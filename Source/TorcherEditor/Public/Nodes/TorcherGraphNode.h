@@ -7,6 +7,9 @@
 #include "Layers/TorcherLayerBaseOptions.h"
 #include "TorcherGraphNode.generated.h"
 
+// Forward declare the TorcherTensorDeviceType
+enum class ETorcherTensorDeviceType : uint8;
+
 /**
  * 
  */
@@ -16,6 +19,9 @@ class TORCHEREDITOR_API UTorcherGraphNode : public UEdGraphNode
 	GENERATED_BODY()
 
 public:
+	// Constructor
+	UTorcherGraphNode();
+	
 	// UEdGraphNode
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FLinearColor GetNodeTitleColor() const override { return FColor::Emerald; }
@@ -23,15 +29,37 @@ public:
 	virtual void GetNodeContextMenuActions(class UToolMenu* Menu, class UGraphNodeContextMenuContext* Context) const override;
 
 public:
-	// Our Functions
-	UEdGraphPin* CreateCustomPin(EEdGraphPinDirection Direction, FName name);
-	
-	void SetLayerNodeOptions(const FTorcherLayerBaseOptions& Options) { LayerNodeOptions = Options; }
+	/*
+	 * Creates a customized pin on our node.
+	 * @param Direction Is the pin an input or an output?
+	 * @param Name Name of the pin
+	 */
+	virtual UEdGraphPin* CreateCustomPin(EEdGraphPinDirection Direction, FName Name);
 
-	FTorcherLayerBaseOptions GetLayerNodeOptions() const { return LayerNodeOptions; }
+	/*
+	 * Set the LayerNodeOptions from the Node Properties
+	 */
+	virtual void SetLayerNodeOptions();
+	
+	/*
+	 * Set the LayerNodeOptions from the given Options struct
+	 */
+	virtual void SetLayerNodeOptions(const FTorcherLayerBaseOptions& InOptions);
+
+	/*
+	 * Get the LayerNode options as a struct
+	 *
+	 * @return struct of type FTorcherLayerBaseOptions
+	 */
+	virtual FTorcherLayerBaseOptions& GetLayerNodeOptions();
 
 protected:
-	
-	UPROPERTY(EditAnywhere)
-	FTorcherLayerBaseOptions LayerNodeOptions = FTorcherLayerBaseOptions();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Base Attributes")
+	FString LayerName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Base Attributes")
+	ETorcherTensorDeviceType LayerDeviceType;
+
+private:
+	FTorcherLayerBaseOptions Options;
 };
