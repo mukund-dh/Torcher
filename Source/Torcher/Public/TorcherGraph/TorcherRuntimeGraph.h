@@ -36,12 +36,21 @@ class TORCHER_API UTorcherRuntimePin : public UObject
 {
     GENERATED_BODY()
 public:
+	/*
+	 * The Pin Name
+	 */
 	UPROPERTY()
 	FName PinName;
 
+	/*
+	 * The Pin Guid
+	 */
 	UPROPERTY()
 	FGuid PinId;
 
+	/*
+	 * The pin we are connected to
+	 */
 	UPROPERTY()
 	UTorcherRuntimePin* Connection = nullptr;
 };
@@ -55,24 +64,48 @@ class TORCHER_API UTorcherRuntimeNode : public UObject
     GENERATED_BODY()
 
 public:
+	/*
+	 * The Node Type of this node.
+	 */
 	UPROPERTY()
 	ETorcherNodeType NodeType = ETorcherNodeType::Default;
-	
+
+	/*
+	 * The Input Pin
+	 */
 	UPROPERTY()
 	UTorcherRuntimePin* InputPin;
 
+	/*
+	 * The Output Pins of this node
+	 */
 	UPROPERTY()
 	TArray<UTorcherRuntimePin*> OutputPins;
 
+	/*
+	 * Where is this node located on the graph?
+	 */
 	UPROPERTY()
 	FVector2D Location;
 
+	/*
+	 * The Layer Node Name
+	 */
 	UPROPERTY()
 	FString LayerName;
 
+	/*
+	 * The Layer Device Type
+	 */
 	UPROPERTY()
 	ETorcherTensorDeviceType LayerDeviceType;
 
+	/*
+	 * Set the layer options for this layer. Can take in any struct which derives from
+	 * FTorcherLayerBaseOptions
+	 * @param Options The options struct to use to set the options from
+	 * 
+	 */
 	template<typename TOptions = FTorcherLayerBaseOptions>
 	void SetLayerOptions(const TOptions& Options)
 	{
@@ -85,8 +118,12 @@ public:
 		OnSetOptions(Options);
 	}
 
-	virtual void OnSetOptions(const FTorcherLayerBaseOptions& InOptions) {}
-
+	/*
+	 * Get the layer options for this layer. Can return any struct which derives from
+	 * FTorcherLayerBaseOptions
+	 * @return The options struct to use to set the options from
+	 * 
+	 */
 	template<typename TOptions = FTorcherLayerBaseOptions>
 	TOptions GetLayerOptions()
 	{
@@ -103,6 +140,21 @@ public:
 		return Options;
 	}
 
+public:
+	/*
+	 * Virtual function call which can be overridden in the derived classes to set
+	 * any extra properties that class may possess.
+	 * @param InOptions The Incoming Options struct.
+	 * 
+	 */
+	virtual void OnSetOptions(const FTorcherLayerBaseOptions& InOptions) {}
+
+	/*
+	 * Virtual function call which can be overridden in the derived classes to get
+	 * any extra properties that class may possess.
+	 * @param OutOptions The Options struct you want to populate here.
+	 * 
+	 */
 	virtual void OnGetOptions(FTorcherLayerBaseOptions& OutOptions) const {}
 };
 
