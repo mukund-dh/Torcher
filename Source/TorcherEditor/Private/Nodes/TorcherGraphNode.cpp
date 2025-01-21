@@ -45,24 +45,3 @@ UEdGraphPin* UTorcherGraphNode::CreateCustomPin(EEdGraphPinDirection Direction, 
 	Pin->PinType.PinSubCategory = SubCategory;
 	return Pin;
 }
-
-void UTorcherGraphNode::SetLayerNodeOptions()
-{
-	Options.LayerName = LayerName;
-	Options.LayerDeviceType = LayerDeviceType;
-}
-
-void UTorcherGraphNode::SetLayerNodeOptions(const FTorcherLayerBaseOptions& InOptions)
-{
-	LayerName = InOptions.LayerName;
-	LayerDeviceType = InOptions.LayerDeviceType;
-
-	// Setting it two times; working for now but need to figure out a better way to do this.
-	Options.LayerName = InOptions.LayerName;
-	Options.LayerDeviceType = InOptions.LayerDeviceType;
-}
-
-FTorcherLayerBaseOptions& UTorcherGraphNode::GetLayerNodeOptions()
-{
-	return Options;
-}

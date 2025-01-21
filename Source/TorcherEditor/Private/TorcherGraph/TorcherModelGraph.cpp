@@ -92,7 +92,7 @@ void TorcherModelGraph::OnNodeDetailsViewPropertyUpdated(const FPropertyChangedE
 		if (TorcherNode)
 		{
 			// Set the layer node options here.
-			TorcherNode->SetLayerNodeOptions();
+			
 		}
 		_workingGraphUi->NotifyGraphChanged();
 	}
@@ -122,7 +122,8 @@ void TorcherModelGraph::UpdateWorkingAssetFromGraph()
 		
 		UTorcherRuntimeNode* RuntimeNode = NewObject<UTorcherRuntimeNode>(RuntimeGraph);
 		RuntimeNode->Location = FVector2D(UiNode->NodePosX, UiNode->NodePosY);
-		RuntimeNode->SetLayerOptions(UiGraphNode->GetLayerNodeOptions());
+		FTorcherLayerBaseOptions BaseOpts =	UiGraphNode->GetLayerNodeOptions();
+		RuntimeNode->SetLayerOptions(BaseOpts);
 
 		for (UEdGraphPin* Pin : UiNode->Pins)
 		{
@@ -175,8 +176,7 @@ void TorcherModelGraph::UpdateGraphFromWorkingAsset()
 		NewNode->NodePosY = RuntimeNode->Location.Y;
 
 		// Set the layer options here.
-		FTorcherLayerBaseOptions Options;
-		RuntimeNode->GetLayerOptions(Options);
+		FTorcherLayerBaseOptions Options = RuntimeNode->GetLayerOptions();
 		NewNode->SetLayerNodeOptions(Options);
 
 		if (RuntimeNode->InputPin != nullptr)

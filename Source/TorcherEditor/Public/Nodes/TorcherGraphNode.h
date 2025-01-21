@@ -37,21 +37,53 @@ public:
 	virtual UEdGraphPin* CreateCustomPin(EEdGraphPinDirection Direction, FName Name);
 
 	/*
-	 * Set the LayerNodeOptions from the Node Properties
+	 * Virtual function which can be overridden in derived classes to
+	 * set additional fields in their Node Properties
 	 */
-	virtual void SetLayerNodeOptions();
+	virtual void OnOptionsSet(const FTorcherLayerBaseOptions& InOptions) {}
+
+	/*
+	 * Virtual function which can be overridden in derived classes to
+	 * get additional LayerNodeOptions from the Node Properties
+	 */
+	virtual void OnGetOptions(FTorcherLayerBaseOptions& OutOptions) const {}
 	
 	/*
 	 * Set the LayerNodeOptions from the given Options struct
+	 * @param InOptions The Base Layer Options Struct
 	 */
-	virtual void SetLayerNodeOptions(const FTorcherLayerBaseOptions& InOptions);
+	template<typename TOptions = FTorcherLayerBaseOptions>
+	void SetLayerNodeOptions(const TOptions InOptions)
+	{
+		static_assert(std::is_base_of<FTorcherLayerBaseOptions, TOptions>::value,
+			"TOptions must derive from FTorcherLayerBaseOptions");
+
+		LayerName = InOptions.LayerName;
+		LayerDeviceType = InOptions.LayerDeviceType;
+
+		OnOptionsSet(InOptions);
+	}
 
 	/*
 	 * Get the LayerNode options as a struct
 	 *
 	 * @return struct of type FTorcherLayerBaseOptions
 	 */
-	virtual FTorcherLayerBaseOptions& GetLayerNodeOptions();
+	template<typename TOptions = FTorcherLayerBaseOptions>
+	TOptions GetLayerNodeOptions() const
+	{
+		static_assert(std::is_base_of<FTorcherLayerBaseOptions, TOptions>::value,
+			"TOptions must derive from FTorcherLayerBaseOptions");
+
+		TOptions Options;
+
+		Options.LayerName = LayerName;
+		Options.LayerDeviceType = LayerDeviceType;
+
+		OnGetOptions(Options);
+
+		return Options;
+	}
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Base Attributes")
@@ -59,7 +91,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Base Attributes")
 	ETorcherTensorDeviceType LayerDeviceType;
-
-private:
-	FTorcherLayerBaseOptions Options;
 };

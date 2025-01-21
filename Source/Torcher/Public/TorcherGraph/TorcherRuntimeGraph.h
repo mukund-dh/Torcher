@@ -73,9 +73,37 @@ public:
 	UPROPERTY()
 	ETorcherTensorDeviceType LayerDeviceType;
 
-	virtual void SetLayerOptions(const FTorcherLayerBaseOptions& Options);
-	
-	virtual void GetLayerOptions(FTorcherLayerBaseOptions& Options);
+	template<typename TOptions = FTorcherLayerBaseOptions>
+	void SetLayerOptions(const TOptions& Options)
+	{
+		static_assert(std::is_base_of<FTorcherLayerBaseOptions, TOptions>::value,
+			"TOptions must derive from FTorcherLayerBaseOptions");
+
+		LayerName = Options.LayerName;
+		LayerDeviceType = Options.LayerDeviceType;
+
+		OnSetOptions(Options);
+	}
+
+	virtual void OnSetOptions(const FTorcherLayerBaseOptions& InOptions) {}
+
+	template<typename TOptions = FTorcherLayerBaseOptions>
+	TOptions GetLayerOptions()
+	{
+		static_assert(std::is_base_of<FTorcherLayerBaseOptions, TOptions>::value,
+			"TOptions must derive from FTorcherLayerBaseOptions");
+
+		TOptions Options;
+
+		Options.LayerName = LayerName;
+		Options.LayerDeviceType = LayerDeviceType;
+
+		OnGetOptions(Options);
+
+		return Options;
+	}
+
+	virtual void OnGetOptions(FTorcherLayerBaseOptions& OutOptions) const {}
 };
 
 /**
