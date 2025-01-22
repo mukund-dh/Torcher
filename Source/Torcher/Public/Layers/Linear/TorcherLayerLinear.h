@@ -46,7 +46,7 @@ public:
 	 * Initialize the Parameters of this Layer. In this case, they are the Weights and Bias Tensors.
 	 * Weights are a torch::randn, bias is a torch::zeros
 	 */
-	virtual void InitializeLayerParams() override;
+	virtual void InitializeLayerParams(const float Gain = 1.0, const float Confidence = 1.0) override;
 
 	/*
 	 * Get the Parameters of this layer as an array

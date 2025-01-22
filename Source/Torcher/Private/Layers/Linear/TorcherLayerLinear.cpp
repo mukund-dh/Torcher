@@ -11,7 +11,7 @@ UTorcherLayerLinear::UTorcherLayerLinear(const FObjectInitializer& ObjectInitial
 {
 }
 
-void UTorcherLayerLinear::InitializeLayerParams()
+void UTorcherLayerLinear::InitializeLayerParams(const float Gain /*= 1.0*/, const float Confidence /*= 1.0*/)
 {
 	Weights = UTorcherTensorUtilities::CreateRandnTensor(
 		UTorcherTensorFloat::StaticClass(),
@@ -20,12 +20,25 @@ void UTorcherLayerLinear::InitializeLayerParams()
 	);
 	Weights->SetTensorLabel(TEXT("Weights"));
 
-	Bias = UTorcherTensorUtilities::CreateZeroTensor(
-		UTorcherTensorFloat::StaticClass(),
-		TorcherLinearLayerOptions.BiasDimensions,
-		TorcherLinearLayerOptions.LayerDeviceType
-	);
-	Bias->SetTensorLabel(TEXT("Bias"));
+	// Sets the Gain of the Weights parameter to the passed value
+	Weights->SetData((*Weights->GetData()*Gain));
+	
+	// Sets the Confidence of the Weights parameter to the passed value
+	Weights->SetData((*Weights->GetData()*Confidence));
+
+	Bias = nullptr;
+	if (TorcherLinearLayerOptions.bUseBias)
+	{
+		Bias = UTorcherTensorUtilities::CreateZeroTensor(
+			UTorcherTensorFloat::StaticClass(),
+			TorcherLinearLayerOptions.BiasDimensions,
+			TorcherLinearLayerOptions.LayerDeviceType
+		);
+		Bias->SetTensorLabel(TEXT("Bias"));
+
+		// Sets the Confidence of the Bias parameter to the passed value
+		Bias->SetData((*Bias->GetData()*Confidence));
+	}
 }
 
 TArray<TScriptInterface<ITorcherTensorBase>> UTorcherLayerLinear::GetParameters() const
@@ -69,7 +82,7 @@ bool UTorcherLayerLinear::SetGradientToZero(bool bSetToNone)
 		Weights->SetGradientToZero();
 	}
 
-	if (Bias->GetData()->grad().defined())
+	if (Bias != nullptr && Bias->GetData()->grad().defined())
 	{
 		Bias->SetGradientToZero();
 	}
@@ -84,5 +97,6 @@ void UTorcherLayerLinear::SetLayerDeviceType(ETorcherTensorDeviceType DeviceType
 {
 	TorcherLinearLayerOptions.LayerDeviceType = DeviceType;
 	Weights->SetTensorDevice(DeviceType);
-	Bias->SetTensorDevice(DeviceType);
+	if (TorcherLinearLayerOptions.bUseBias && Bias != nullptr)
+		Bias->SetTensorDevice(DeviceType);
 }

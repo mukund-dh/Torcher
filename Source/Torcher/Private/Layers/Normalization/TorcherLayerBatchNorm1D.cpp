@@ -12,7 +12,7 @@ UTorcherLayerBatchNorm1D::UTorcherLayerBatchNorm1D(const FObjectInitializer& Obj
 {
 }
 
-void UTorcherLayerBatchNorm1D::InitializeLayerParams()
+void UTorcherLayerBatchNorm1D::InitializeLayerParams(const float Gain /*= 1.0*/, const float Confidence /*= 1.0*/)
 {
 	Gamma = UTorcherTensorUtilities::CreateOnesTensor(
 		UTorcherTensorFloat::StaticClass(),
@@ -21,6 +21,12 @@ void UTorcherLayerBatchNorm1D::InitializeLayerParams()
 	);
 	Gamma->SetTensorLabel(TEXT("Gamma"));
 
+	// Sets the Gain of the Gamma parameter to the passed value
+	Gamma->SetData((*Gamma->GetData()*Gain));
+	
+	// Sets the Confidence of the Gamma parameter to the passed value
+	Gamma->SetData((*Gamma->GetData()*Confidence));
+	
 	Beta = UTorcherTensorUtilities::CreateZeroTensor(
 		UTorcherTensorFloat::StaticClass(),
 		TArray<int64>{TorcherLayerBatchNorm1DOptions.Dimensions},

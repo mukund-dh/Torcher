@@ -10,7 +10,7 @@ UTorcherLayerTanH::UTorcherLayerTanH(const FObjectInitializer& ObjectInitializer
 {
 }
 
-void UTorcherLayerTanH::InitializeLayerParams()
+void UTorcherLayerTanH::InitializeLayerParams(const float Gain, const float Confidence)
 {
 }
 

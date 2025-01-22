@@ -37,9 +37,12 @@ public:
 
 	/*
 	 * Initialize the parameters of this layer
+	 * @param Gain The amount of gain to apply to this layer
+	 * @param Confidence Manipulates the confidence of this layer
+	 * 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Torcher|Layers")
-	virtual void InitializeLayerParams() = 0;
+	virtual void InitializeLayerParams(const float Gain = 1.0, const float Confidence = 1.0) = 0;
 	
 	/*
 	 * Return a list of parameters this layer uses.
