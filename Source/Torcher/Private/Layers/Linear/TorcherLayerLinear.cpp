@@ -21,10 +21,10 @@ void UTorcherLayerLinear::InitializeLayerParams(const float Gain /*= 1.0*/, cons
 	Weights->SetTensorLabel(TEXT("Weights"));
 
 	// Sets the Gain of the Weights parameter to the passed value
-	Weights->SetData((*Weights->GetData()*Gain));
+	Weights->MultiplyByScalar(Gain);
 	
 	// Sets the Confidence of the Weights parameter to the passed value
-	Weights->SetData((*Weights->GetData()*Confidence));
+	Weights->MultiplyByScalar(Confidence);
 
 	Bias = nullptr;
 	if (TorcherLinearLayerOptions.bUseBias)
@@ -37,7 +37,7 @@ void UTorcherLayerLinear::InitializeLayerParams(const float Gain /*= 1.0*/, cons
 		Bias->SetTensorLabel(TEXT("Bias"));
 
 		// Sets the Confidence of the Bias parameter to the passed value
-		Bias->SetData((*Bias->GetData()*Confidence));
+		Bias->MultiplyByScalar(Confidence);
 	}
 }
 

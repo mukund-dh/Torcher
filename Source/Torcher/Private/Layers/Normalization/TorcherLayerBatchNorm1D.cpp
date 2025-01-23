@@ -22,10 +22,10 @@ void UTorcherLayerBatchNorm1D::InitializeLayerParams(const float Gain /*= 1.0*/,
 	Gamma->SetTensorLabel(TEXT("Gamma"));
 
 	// Sets the Gain of the Gamma parameter to the passed value
-	Gamma->SetData((*Gamma->GetData()*Gain));
+	Gamma->MultiplyByScalar(Gain);
 	
 	// Sets the Confidence of the Gamma parameter to the passed value
-	Gamma->SetData((*Gamma->GetData()*Confidence));
+	Gamma->MultiplyByScalar(Confidence);
 	
 	Beta = UTorcherTensorUtilities::CreateZeroTensor(
 		UTorcherTensorFloat::StaticClass(),

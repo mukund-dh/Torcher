@@ -192,6 +192,69 @@ public:
 	 * @return The modified stream
 	 */
 	friend std::ostream& operator<<(std::ostream& OutStream, const TScriptInterface<ITorcherTensorBase>& TorcherTensor);
+
+	/**
+	 * Multiplies this tensor with another tensor
+	 * 
+	 * @param OtherTensor The tensor to multiply this tensor to.
+	 * @return The modified tensor
+	 */
+	at::Tensor operator*(const at::Tensor& OtherTensor) const
+	{
+		if (!Data)
+		{
+			UE_LOG(LogTorcherTensor, Error, TEXT("Tensor is empty. Aborting"));
+			return at::Tensor();
+		}
+
+		at::Tensor result = torch::matmul(*Data, OtherTensor); 
+		return result;
+	}
+
+	/**
+	 * Multiplies this tensor with a scalar
+	 * 
+	 * @param ScalarValue The value to multiply this tensor with.
+	 * @return The modified tensor
+	 */
+	template<typename Scalar, typename = std::enable_if<std::is_arithmetic_v<Scalar>>>
+	at::Tensor operator*(Scalar ScalarValue) const
+	{
+		if (!Data)
+		{
+			UE_LOG(LogTorcherTensor, Error, TEXT("Tensor is empty. Aborting"));
+			return at::Tensor();
+		}
+		
+		return torch::mul(*Data, static_cast<double>(ScalarValue));
+	}
+
+	/**
+	 * Multiplies this tensor with another UObject with a TorcherTensorBase interface
+	 * @param Other The UObject with the TorcherTensorBase
+	 * @return The modified tensor
+	 */
+	at::Tensor operator*(const TScriptInterface<ITorcherTensorBase>& Other) const
+	{
+		if (!Data || !Other->GetData())
+		{
+			UE_LOG(LogTorcherTensor, Error, TEXT("Invalid tensor for multiplication"));
+			return at::Tensor();
+		}
+
+		return torch::matmul(*Data, *Other->GetData());
+	}
+	
+	void MultiplyByScalar(const float Val)
+	{
+		if (!Data)
+		{
+			UE_LOG(LogTorcherTensor, Error, TEXT("Tensor is empty. Aborting"));
+			return;
+		}
+
+		*Data = torch::mul(*Data, Val);
+	}
 	
 	/*
 	 * Returns a tensor as a string by overloading the FString cast operator
