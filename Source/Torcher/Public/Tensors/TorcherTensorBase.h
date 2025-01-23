@@ -90,7 +90,7 @@ public:
 	FORCEINLINE at::Tensor* GetData() const noexcept
 	{
 		// check if Data contains data
-		if (IsDataDefined())
+		if (!IsDataDefined())
 		{
 			UE_LOG(LogTorcherTensor, Warning, TEXT("Data isn't defined. Skipping"));
 			return nullptr;

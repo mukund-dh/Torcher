@@ -26,5 +26,7 @@ public:
 	))
 	static UObject* CreateLayer(
 		UPARAM(meta=(MustImplement = "/Script/Torcher.ITorcherLayer")) const UClass* Class,
-		ETorcherTensorDeviceType TensorDeviceType);
+		ETorcherTensorDeviceType TensorDeviceType,
+		const float Gain = 1.0,
+		const float Confidence = 1.0);
 };

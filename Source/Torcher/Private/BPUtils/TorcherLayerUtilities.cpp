@@ -5,12 +5,12 @@
 #include "UObject/Package.h"
 #include "Layers/ITorcherLayer.h"
 
-UObject* UTorcherLayerUtilities::CreateLayer(const UClass* Class, ETorcherTensorDeviceType TensorDeviceType)
+UObject* UTorcherLayerUtilities::CreateLayer(const UClass* Class, ETorcherTensorDeviceType TensorDeviceType, const float Gain, const float Confidence)
 {
 	check(Class && Class->ImplementsInterface(UITorcherLayer::StaticClass()));
 	auto* const TorcherLayerObject = NewObject<UObject>(GetTransientPackage(), Class);
 	auto* const TorcherLayer = CastChecked<IITorcherLayer>(TorcherLayerObject);
 
-	TorcherLayer->InitializeLayerParams();
+	TorcherLayer->InitializeLayerParams(Gain, Confidence);
 	return TorcherLayerObject;
 }
