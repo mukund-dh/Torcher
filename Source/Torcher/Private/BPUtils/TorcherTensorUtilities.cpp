@@ -90,7 +90,7 @@ UObject* UTorcherTensorUtilities::CreateRandnTensor(const UClass* Class, const T
 
 	auto* const TensorObject = NewObject<UObject>(GetTransientPackage(), Class);
 	auto* const Tensor = CastChecked<ITorcherTensorBase>(TensorObject);
-
+	
 	Tensor->SetTensorDevice(TensorDeviceType);
 	Tensor->SetData(
 		torch::randn(at::IntArrayRef(Sizes.GetData(), Sizes.Num()),

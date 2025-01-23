@@ -9,6 +9,8 @@ UTorcherGraphNode::UTorcherGraphNode()
 {
 	LayerName = TEXT("UNNAMED LAYER");
 	LayerDeviceType = ETorcherTensorDeviceType::Cpu;
+	Gain = 1.0f;
+	Confidence = 1.0f;
 }
 
 FText UTorcherGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const

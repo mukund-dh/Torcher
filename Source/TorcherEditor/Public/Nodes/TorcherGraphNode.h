@@ -42,6 +42,8 @@ public:
 
 		LayerName = InOptions.LayerName;
 		LayerDeviceType = InOptions.LayerDeviceType;
+		Gain = InOptions.Gain;
+		Confidence = InOptions.Confidence;
 
 		OnSetOptions(InOptions);
 	}
@@ -62,6 +64,8 @@ public:
 
 		Options.LayerName = LayerName;
 		Options.LayerDeviceType = LayerDeviceType;
+		Options.Gain = Gain;
+		Options.Confidence = Confidence;
 
 		OnGetOptions(Options);
 
@@ -94,4 +98,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Base Attributes")
 	ETorcherTensorDeviceType LayerDeviceType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Base Attributes")
+	float Gain;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Base Attributes")
+	float Confidence;
 };

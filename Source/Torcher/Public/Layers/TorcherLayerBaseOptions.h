@@ -28,6 +28,18 @@ struct TORCHER_API FTorcherLayerBaseOptions
 	ETorcherTensorDeviceType LayerDeviceType;
 
 	/*
+	 * Device type of this layer
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = true), Category = "Layer|Base Params")
+	float Gain;
+
+	/*
+	 * Device type of this layer
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = true), Category = "Layer|Base Params")
+	float Confidence;
+
+	/*
 	 * Constructor
 	 */
 	UE_NODISCARD_CTOR

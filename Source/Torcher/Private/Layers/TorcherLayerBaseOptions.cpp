@@ -7,6 +7,8 @@
 FTorcherLayerBaseOptions::FTorcherLayerBaseOptions()
 	: LayerName(TEXT("UNNAMED_LAYER"))
 	, LayerDeviceType(ETorcherTensorDeviceType::Cpu)
+	, Gain(1.0f)
+	, Confidence(1.0f)
 {
 }
 

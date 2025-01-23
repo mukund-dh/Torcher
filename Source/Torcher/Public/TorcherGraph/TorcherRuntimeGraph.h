@@ -101,6 +101,18 @@ public:
 	ETorcherTensorDeviceType LayerDeviceType;
 
 	/*
+	 * The Gain for this layer
+	 */
+	UPROPERTY()
+	float Gain = 1.0f;
+
+	/*
+	 * The Confidence of this layer 
+	 */
+	UPROPERTY()
+	float Confidence = 1.0f;
+
+	/*
 	 * Set the layer options for this layer. Can take in any struct which derives from
 	 * FTorcherLayerBaseOptions
 	 * @param Options The options struct to use to set the options from
@@ -114,6 +126,8 @@ public:
 
 		LayerName = Options.LayerName;
 		LayerDeviceType = Options.LayerDeviceType;
+		Gain = Options.Gain;
+		Confidence = Options.Confidence;
 
 		OnSetOptions(Options);
 	}
@@ -134,6 +148,8 @@ public:
 
 		Options.LayerName = LayerName;
 		Options.LayerDeviceType = LayerDeviceType;
+		Options.Gain = Gain;
+		Options.Confidence = Confidence;
 
 		OnGetOptions(Options);
 
