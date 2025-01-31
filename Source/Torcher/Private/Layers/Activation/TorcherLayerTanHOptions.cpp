@@ -5,6 +5,7 @@
 
 FTorcherLayerTanHOptions::FTorcherLayerTanHOptions()
 {
+	LayerType = ETorcherNodeType::TanH;
 	LayerName = TEXT("TanH Layer");
 	LayerDeviceType = ETorcherTensorDeviceType::Cpu;
 }

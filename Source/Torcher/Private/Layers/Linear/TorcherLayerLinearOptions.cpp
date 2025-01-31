@@ -5,6 +5,7 @@
 
 FTorcherLayerLinearOptions::FTorcherLayerLinearOptions()
 {
+	LayerType = ETorcherNodeType::Linear;
 	LayerName = TEXT("Linear Layer");
 	LayerDeviceType = ETorcherTensorDeviceType::Cpu;
 	WeightsDimensions = TArray<int64>{4, 4};

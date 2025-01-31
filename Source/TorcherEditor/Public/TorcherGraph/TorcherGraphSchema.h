@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraphSchema.h"
+#include "Nodes/Default/TorcherNNStartNode.h"
+#include "Nodes/TorcherLayerNode.h"
 #include "TorcherGraphSchema.generated.h"
 
 /**
@@ -17,6 +19,7 @@ class TORCHEREDITOR_API UTorcherGraphSchema : public UEdGraphSchema
 public:
 	virtual void GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const override;
 	virtual const FPinConnectionResponse CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const override;
+	virtual void CreateDefaultNodesForGraph(UEdGraph& Graph) const override;
 };
 
 USTRUCT()

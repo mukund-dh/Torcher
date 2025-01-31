@@ -12,7 +12,7 @@ FTorcherModelAssetTypeActions::FTorcherModelAssetTypeActions(EAssetTypeCategorie
 
 UClass* FTorcherModelAssetTypeActions::GetSupportedClass() const
 {
-	return UObject::StaticClass();
+	return UTorcherModelBase::StaticClass();
 }
 
 FText FTorcherModelAssetTypeActions::GetName() const

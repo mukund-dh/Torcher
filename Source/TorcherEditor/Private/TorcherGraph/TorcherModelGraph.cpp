@@ -5,9 +5,10 @@
 #include "TorcherGraph/TorcherModelGraphAppMode.h"
 #include "Models/TorcherModelBase.h"
 #include "Kismet2/BlueprintEditorUtils.h"
-#include "Nodes/TorcherGraphNode.h"
+#include "Nodes/TorcherLayerNode.h"
 #include "TorcherGraph/TorcherGraphSchema.h"
 #include "TorcherGraph/TorcherRuntimeGraph.h"
+#include "Nodes/Default/TorcherNNStartNode.h"
 
 void TorcherModelGraph::RegisterTabSpawners(const TSharedRef<FTabManager>& tabManager)
 {
@@ -116,14 +117,9 @@ void TorcherModelGraph::UpdateWorkingAssetFromGraph()
 	TMap<FGuid, UTorcherRuntimePin*> IdToPinMap;
 
 	for (UEdGraphNode* UiNode : _workingGraph->Nodes)
-	{
-		UTorcherGraphNode* UiGraphNode = Cast<UTorcherGraphNode>(UiNode);
-		if (UiGraphNode == nullptr) continue;
-		
+	{		
 		UTorcherRuntimeNode* RuntimeNode = NewObject<UTorcherRuntimeNode>(RuntimeGraph);
 		RuntimeNode->Location = FVector2D(UiNode->NodePosX, UiNode->NodePosY);
-		FTorcherLayerBaseOptions BaseOpts =	UiGraphNode->GetLayerNodeOptions();
-		RuntimeNode->SetLayerOptions(BaseOpts);
 
 		for (UEdGraphPin* Pin : UiNode->Pins)
 		{
@@ -148,6 +144,16 @@ void TorcherModelGraph::UpdateWorkingAssetFromGraph()
 			}
 		}
 
+		if (UiNode->IsA(UTorcherLayerNode::StaticClass()))
+		{
+			UTorcherLayerNode* UiGraphNode = Cast<UTorcherLayerNode>(UiNode);
+			FTorcherLayerBaseOptions BaseOpts =	UiGraphNode->GetLayerNodeOptions();
+			RuntimeNode->SetLayerOptions(BaseOpts);
+		} else if (UiNode->IsA(UTorcherNNStartNode::StaticClass()))
+		{
+			RuntimeNode->NodeType = ETorcherNodeType::Input;
+		}
+		
 		RuntimeGraph->GraphNodes.Add(RuntimeNode);
 	}
 
@@ -162,22 +168,65 @@ void TorcherModelGraph::UpdateWorkingAssetFromGraph()
 void TorcherModelGraph::UpdateGraphFromWorkingAsset()
 {
 	if (_workingAsset->ModelGraph == nullptr)
+	{
+		_workingGraph->GetSchema()->CreateDefaultNodesForGraph(*_workingGraph);
 		return;
-
+	}
+	
 	TArray<std::pair<FGuid, FGuid>> Connections;
 	TMap<FGuid, UEdGraphPin*> IdToPinMap;
 
 	for (UTorcherRuntimeNode* RuntimeNode : _workingAsset->ModelGraph->GraphNodes)
 	{
-		UTorcherGraphNode* NewNode = NewObject<UTorcherGraphNode>(_workingGraph);
+		// Get the layer options here.
+		FTorcherLayerBaseOptions Options = RuntimeNode->GetLayerOptions();
+		
+		UTorcherGraphNode* NewNode = nullptr;
+		switch (RuntimeNode->NodeType)
+		{
+			case ETorcherNodeType::Default:
+				{
+					UTorcherLayerNode* DefNode = NewObject<UTorcherLayerNode>(_workingGraph);
+					NewNode = DefNode;
+					break;
+				}
+			case ETorcherNodeType::Linear:
+				{
+					UTorcherLayerNode* LinearNode = NewObject<UTorcherLayerNode>(_workingGraph);
+					LinearNode->SetLayerNodeOptions(Options);
+					NewNode = LinearNode;
+					break;
+				}
+			case ETorcherNodeType::BatchNorm1D:
+				{
+					UTorcherLayerNode* BN1D = NewObject<UTorcherLayerNode>(_workingGraph);
+					BN1D->SetLayerNodeOptions(Options);
+					NewNode = BN1D;
+					break;
+				}
+			case ETorcherNodeType::TanH:
+				{
+					UTorcherLayerNode* TanH = NewObject<UTorcherLayerNode>(_workingGraph);
+					TanH->SetLayerNodeOptions(Options);
+					NewNode = TanH;
+					break;
+				}
+			case ETorcherNodeType::Input:
+				{
+					NewNode = NewObject<UTorcherNNStartNode>(_workingGraph);
+					break;
+				}
+			case ETorcherNodeType::Output:
+				{
+					NewNode = nullptr;
+					break;
+				}
+		}
+		
 		NewNode->CreateNewGuid();
 
 		NewNode->NodePosX = RuntimeNode->Location.X;
 		NewNode->NodePosY = RuntimeNode->Location.Y;
-
-		// Set the layer options here.
-		FTorcherLayerBaseOptions Options = RuntimeNode->GetLayerOptions();
-		NewNode->SetLayerNodeOptions(Options);
 
 		if (RuntimeNode->InputPin != nullptr)
 		{

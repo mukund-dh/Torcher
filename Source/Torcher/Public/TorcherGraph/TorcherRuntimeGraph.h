@@ -4,29 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NameTypes.h"
+#include "TorcherTypes.h"
 #include "Layers/TorcherLayerBaseOptions.h"
 #include "TorcherRuntimeGraph.generated.h"
-
-UENUM()
-enum class ETorcherNodeType
-{
-	// The Start Node
-	Input,
-
-	Default, // The default node type which gets created when the graph is initialized
-
-	// Linear Layer
-	Linear,
-
-	// Normalization Layers
-	BatchNorm1D,
-
-	// Activation Layers
-	TanH,
-
-	// The End Node
-	Output
-};
 
 /**
  * Holds data for runtime pin generation
@@ -36,6 +16,12 @@ class TORCHER_API UTorcherRuntimePin : public UObject
 {
     GENERATED_BODY()
 public:
+	/*
+	 * The Node Type
+	 */
+	UPROPERTY()
+	ETorcherNodeType NodeType = ETorcherNodeType::Default;
+	
 	/*
 	 * The Pin Name
 	 */
@@ -121,9 +107,10 @@ public:
 	template<typename TOptions = FTorcherLayerBaseOptions>
 	void SetLayerOptions(const TOptions& Options)
 	{
-		static_assert(std::is_base_of<FTorcherLayerBaseOptions, TOptions>::value,
+		static_assert(std::is_base_of_v<FTorcherLayerBaseOptions, TOptions>,
 			"TOptions must derive from FTorcherLayerBaseOptions");
 
+		NodeType = Options.LayerType;
 		LayerName = Options.LayerName;
 		LayerDeviceType = Options.LayerDeviceType;
 		Gain = Options.Gain;
@@ -141,11 +128,12 @@ public:
 	template<typename TOptions = FTorcherLayerBaseOptions>
 	TOptions GetLayerOptions()
 	{
-		static_assert(std::is_base_of<FTorcherLayerBaseOptions, TOptions>::value,
+		static_assert(std::is_base_of_v<FTorcherLayerBaseOptions, TOptions>,
 			"TOptions must derive from FTorcherLayerBaseOptions");
 
 		TOptions Options;
 
+		Options.LayerType = NodeType;
 		Options.LayerName = LayerName;
 		Options.LayerDeviceType = LayerDeviceType;
 		Options.Gain = Gain;

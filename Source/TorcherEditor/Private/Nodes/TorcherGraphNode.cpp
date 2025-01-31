@@ -8,9 +8,6 @@
 UTorcherGraphNode::UTorcherGraphNode()
 {
 	LayerName = TEXT("UNNAMED LAYER");
-	LayerDeviceType = ETorcherTensorDeviceType::Cpu;
-	Gain = 1.0f;
-	Confidence = 1.0f;
 }
 
 FText UTorcherGraphNode::GetNodeTitle(ENodeTitleType::Type TitleType) const
@@ -38,7 +35,7 @@ void UTorcherGraphNode::GetNodeContextMenuActions(UToolMenu* Menu, UGraphNodeCon
 	);
 }
 
-UEdGraphPin* UTorcherGraphNode::CreateCustomPin(EEdGraphPinDirection Direction, FName Name)
+/*UEdGraphPin* UTorcherGraphNode::CreateCustomPin(EEdGraphPinDirection Direction, FName Name)
 {
 	FName Category = (Direction == EEdGraphPinDirection::EGPD_Input) ? TEXT("Inputs") : TEXT("Outputs");
 	FName SubCategory = TEXT("TorcherPin");
@@ -46,4 +43,4 @@ UEdGraphPin* UTorcherGraphNode::CreateCustomPin(EEdGraphPinDirection Direction, 
 	UEdGraphPin* Pin = CreatePin(Direction, Category, SubCategory, Name);
 	Pin->PinType.PinSubCategory = SubCategory;
 	return Pin;
-}
+}*/

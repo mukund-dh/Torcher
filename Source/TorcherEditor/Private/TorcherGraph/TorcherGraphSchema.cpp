@@ -3,7 +3,6 @@
 
 #include "TorcherGraph/TorcherGraphSchema.h"
 #include "Nodes/TorcherGraphNode.h"
-#include "Layers/TorcherLayerBaseOptions.h"
 
 void UTorcherGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
@@ -28,6 +27,19 @@ const FPinConnectionResponse UTorcherGraphSchema::CanCreateConnection(const UEdG
 		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, TEXT("Can't connect two pins of same direction"));
 
 	return FPinConnectionResponse(CONNECT_RESPONSE_BREAK_OTHERS_AB, TEXT("CONNECTION SUCCESSFUL"));
+}
+
+void UTorcherGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
+{
+	UTorcherNNStartNode* StartNode = NewObject<UTorcherNNStartNode>(&Graph);
+	StartNode->CreateNewGuid();
+	StartNode->NodePosX = 0.0f;
+	StartNode->NodePosY = 0.0f;
+
+	StartNode->CreateCustomPin(EGPD_Output, FName(TEXT("Tensor")));
+	Graph.AddNode(StartNode, true,true);
+	Graph.Modify();
+	
 }
 
 UEdGraphNode* FNewNodeAction::PerformAction(UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location,

@@ -29,6 +29,25 @@ protected:
 	}
 };
 
+class STorcherGraphStartPin : public SGraphPin
+{
+public:
+	SLATE_BEGIN_ARGS(STorcherGraphStartPin) {}
+	SLATE_END_ARGS()
+
+	void Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
+	{
+		SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
+	}
+
+protected:
+
+	virtual FSlateColor GetPinColor() const override
+	{
+		return FLinearColor(1.0f, 0.2f, 0.2f);
+	}
+};
+
 struct FTorcherPinFactory : public FGraphPanelPinFactory
 {
 public:
@@ -39,6 +58,9 @@ public:
 		if (FName(TEXT("TorcherPin")) == Pin->PinType.PinSubCategory)
 		{
 			return SNew(STorcherGraphPin, Pin);
+		} else if (FName(TEXT("TorcherStartPin")) == Pin->PinType.PinSubCategory)
+		{
+			return SNew(STorcherGraphStartPin, Pin);
 		}
 
 		return nullptr;
@@ -48,7 +70,7 @@ public:
 void FTorcherEditorModule::StartupModule()
 {
 	IAssetTools& AssetTools = IAssetTools::Get();
-	EAssetTypeCategories::Type assetCategory = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("Torcher")), FText::FromString("Torcher Models"));
+	EAssetTypeCategories::Type assetCategory = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("TorcherModels")), FText::FromString("Torcher Models"));
 	TSharedPtr<FTorcherModelAssetTypeActions> TorcherModelAssetTypeActions = MakeShared<FTorcherModelAssetTypeActions>(assetCategory);
 	FAssetToolsModule::GetModule().Get().RegisterAssetTypeActions(TorcherModelAssetTypeActions.ToSharedRef());
 

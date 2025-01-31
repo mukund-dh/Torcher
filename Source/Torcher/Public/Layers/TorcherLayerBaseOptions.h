@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TorcherTypes.h"
 #include "Tensors/TorcherDeviceType.h"
 #include "TorcherLayerBaseOptions.generated.h"
 
@@ -14,6 +15,12 @@ USTRUCT(BlueprintType, DisplayName = "Torcher Layer Base Options")
 struct TORCHER_API FTorcherLayerBaseOptions
 {
     GENERATED_BODY()
+
+	/*
+	 * Type of this layer
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true), Category = "Layer|Base Params")
+	ETorcherNodeType LayerType;
 
 	/*
 	 * Name of this layer

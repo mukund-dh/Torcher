@@ -5,6 +5,7 @@
 
 FTorcherLayerBatchNorm1DOptions::FTorcherLayerBatchNorm1DOptions()
 {
+	LayerType = ETorcherNodeType::BatchNorm1D;
 	LayerName = TEXT("BatchNorm1D Layer");
 	LayerDeviceType = ETorcherTensorDeviceType::Cpu;
 	Eps = 0.00001f;
