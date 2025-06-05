@@ -8,9 +8,10 @@
 UObject* UTorcherLayerUtilities::CreateLayer(const UClass* Class, ETorcherTensorDeviceType TensorDeviceType, const float Gain, const float Confidence)
 {
 	check(Class && Class->ImplementsInterface(UITorcherLayer::StaticClass()));
-	auto* const TorcherLayerObject = NewObject<UObject>(GetTransientPackage(), Class);
-	auto* const TorcherLayer = CastChecked<IITorcherLayer>(TorcherLayerObject);
+       auto* const TorcherLayerObject = NewObject<UObject>(GetTransientPackage(), Class);
+       auto* const TorcherLayer = CastChecked<IITorcherLayer>(TorcherLayerObject);
 
-	TorcherLayer->InitializeLayerParams(Gain, Confidence);
-	return TorcherLayerObject;
+       TorcherLayer->SetLayerDeviceType(TensorDeviceType);
+       TorcherLayer->InitializeLayerParams(Gain, Confidence);
+       return TorcherLayerObject;
 }

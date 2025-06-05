@@ -75,9 +75,13 @@ bool UTorcherLayerBatchNorm1D::Forward(const TScriptInterface<ITorcherTensorBase
 	// Update the buffers
 	if (TorcherLayerBatchNorm1DOptions.bIsTraining)
 	{
-		torch::NoGradGuard NoGrad;
-		RunningMean->SetData((1 - TorcherLayerBatchNorm1DOptions.Momentum) * (*RunningMean->GetData() + TorcherLayerBatchNorm1DOptions.Momentum + *XMean));
-		RunningVariance->SetData((1 - TorcherLayerBatchNorm1DOptions.Momentum) * (*RunningVariance->GetData() + TorcherLayerBatchNorm1DOptions.Momentum + *XVar));
+                torch::NoGradGuard NoGrad;
+                RunningMean->SetData(
+                        (1 - TorcherLayerBatchNorm1DOptions.Momentum) * (*RunningMean->GetData()) +
+                        TorcherLayerBatchNorm1DOptions.Momentum * (*XMean));
+                RunningVariance->SetData(
+                        (1 - TorcherLayerBatchNorm1DOptions.Momentum) * (*RunningVariance->GetData()) +
+                        TorcherLayerBatchNorm1DOptions.Momentum * (*XVar));
 	}
 
 	auto* const TensorObject = NewObject<UObject>(GetTransientPackage(), UTorcherTensorFloat::StaticClass());
